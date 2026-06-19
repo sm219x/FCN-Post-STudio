@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FCN Post Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/glacial-indifference" rel="stylesheet">
+<script src="poster-export.js"></script>
+<style>
+  *{ box-sizing:border-box; }
+  :root{ --navy:#0C1F35; --blue:#1E4874; --cream:#F5EFE0; --amber:#E0935A; --terra:#C0563A; }
+  html,body{ margin:0; height:100%; }
+  body{ font-family:'Glacial Indifference',sans-serif; color:var(--navy); background:#e7e5df; }
+
+  /* ---------- password gate ---------- */
+  #gate{ position:fixed; inset:0; background:var(--navy); display:flex; align-items:center; justify-content:center; z-index:50; }
+  #gate .box{ width:340px; text-align:center; color:var(--cream); }
+  #gate img{ height:64px; margin-bottom:18px; }
+  #gate h1{ font-family:'DM Serif Display',serif; font-weight:400; font-size:30px; margin:0 0 6px; }
+  #gate p{ opacity:0.6; font-size:14px; margin:0 0 22px; }
+  #gate input{ width:100%; padding:13px 16px; border-radius:8px; border:1px solid rgba(245,239,224,0.25); background:rgba(255,255,255,0.06); color:var(--cream); font-size:15px; font-family:inherit; }
+  #gate button{ width:100%; margin-top:10px; padding:13px; border-radius:8px; border:0; background:var(--amber); color:var(--navy); font-weight:700; font-size:15px; cursor:pointer; font-family:inherit; }
+  #gate .err{ color:#E8A; font-size:13px; height:16px; margin-top:8px; }
+
+  /* ---------- layout ---------- */
+  #app{ display:none; min-height:100vh; }
+  header{ background:var(--navy); color:var(--cream); padding:18px 32px; display:flex; align-items:center; gap:14px; }
+  header img{ height:34px; }
+  header .t{ font-family:'DM Serif Display',serif; font-size:20px; }
+  header .s{ margin-left:auto; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; opacity:0.6; }
+  .wrap{ display:grid; grid-template-columns:minmax(380px,1fr) minmax(440px,520px); gap:0; align-items:start; }
+  @media(max-width:960px){ .wrap{ grid-template-columns:1fr; } }
+
+  /* ---------- form ---------- */
+  .form{ padding:28px 32px 60px; }
+  .grp{ margin-bottom:22px; }
+  .grp > label{ display:block; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; color:var(--navy); opacity:0.6; margin-bottom:8px; }
+  input[type=text], textarea, select{ width:100%; padding:11px 13px; border-radius:8px; border:1.5px solid rgba(12,31,53,0.16); background:#fff; font-size:15px; font-family:inherit; color:var(--navy); }
+  textarea{ resize:vertical; min-height:64px; line-height:1.5; }
+  .row{ display:flex; gap:8px; }
+  .row > *{ flex:1; }
+  .seg{ display:flex; gap:8px; flex-wrap:wrap; }
+  .seg button{ flex:1; min-width:90px; padding:10px; border-radius:8px; border:1.5px solid rgba(12,31,53,0.18); background:#fff; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; color:var(--navy); }
+  .seg button.on{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
+  .swatches{ display:flex; gap:10px; }
+  .swatches button{ width:38px; height:38px; border-radius:50%; border:2px solid rgba(12,31,53,0.2); cursor:pointer; }
+  .swatches button.on{ outline:2px solid var(--navy); outline-offset:2px; }
+  .price-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .price-row input:first-child{ flex:2; }
+  .price-row input:last-of-type{ flex:1; }
+  .price-row button{ width:38px; border-radius:8px; border:1.5px solid rgba(192,86,58,0.4); background:#fff; color:var(--terra); cursor:pointer; font-weight:700; }
+  .add{ background:none; border:1px dashed rgba(12,31,53,0.3); color:var(--navy); padding:8px 12px; border-radius:8px; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; }
+  .keypoints{ background:#fff; border:1.5px solid rgba(30,72,116,0.22); border-radius:12px; padding:18px; }
+  .keypoints textarea{ min-height:84px; border-color:rgba(12,31,53,0.18); }
+  .gen-btn{ width:100%; margin-top:10px; padding:13px; border-radius:8px; border:0; background:var(--blue); color:#fff; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:0.02em; }
+  .gen-btn:disabled{ opacity:0.55; cursor:default; }
+  .gen-btn.busy{ background:var(--navy); }
+  .suggest{ background:none; border:0; color:var(--terra); font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; float:right; letter-spacing:0.03em; }
+  .hint{ font-size:12px; opacity:0.5; margin-top:6px; }
+  .upload{ display:block; padding:14px; border:1.5px dashed rgba(12,31,53,0.25); border-radius:8px; text-align:center; cursor:pointer; font-size:14px; font-weight:600; }
+  .upload input{ display:none; }
+  .airline-only,.hotel-note{ display:none; }
+
+  /* ---------- preview ---------- */
+  .preview{ position:sticky; top:0; height:100vh; overflow:auto; background:#dedbd2; padding:28px; display:flex; flex-direction:column; align-items:center; gap:18px; }
+  .stage{ width:411px; height:514px; border-radius:3px; box-shadow:0 6px 24px rgba(0,0,0,0.18); overflow:hidden; flex:none; }
+  #poster{ width:1080px; height:1350px; transform:scale(0.3805); transform-origin:top left; position:relative; overflow:hidden; }
+  .actions{ display:flex; gap:10px; }
+  .actions button{ padding:12px 20px; border-radius:999px; border:0; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+  .btn-png{ background:var(--navy); color:#fff; }
+  .btn-cap{ background:#fff; color:var(--navy); border:1.5px solid rgba(12,31,53,0.2)!important; }
+  .toast{ font-size:13px; color:var(--navy); opacity:0; transition:opacity .2s; }
+  .toast.show{ opacity:0.7; }
+  .cap-box{ width:411px; background:#fff; border-radius:6px; padding:16px; }
+  .cap-box label{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; opacity:0.5; }
+  .cap-box textarea{ margin-top:8px; min-height:120px; font-size:13px; }
+</style>
+</head>
+<body>
+
+<!-- ===== password gate ===== -->
+<div id="gate">
+  <div class="box">
+    <img src="assets/fcn-mark-white.png" alt="FCN">
+    <h1>FCN Post Studio</h1>
+    <p>Team access only</p>
+    <input id="pw" type="password" placeholder="Enter password" autocomplete="off">
+    <button id="pwGo">Enter</button>
+    <div class="err" id="pwErr"></div>
+  </div>
+</div>
+
+<!-- ===== app ===== -->
+<div id="app">
+  <header>
+    <img src="assets/fcn-mark-white.png" alt="FCN">
+    <span class="t">Post Studio</span>
+    <span class="s">First Class Ninjas</span>
+  </header>
+
+  <div class="wrap">
+    <!-- form -->
+    <div class="form">
+      <div class="grp">
+        <label>Post type</label>
+        <div class="seg" id="typeSeg">
+          <button data-v="flight" class="on">Flight deal</button>
+          <button data-v="airline">Airline-specific</button>
+          <button data-v="hotel">Hotel deal</button>
+          <button data-v="lastmin">Last-minute</button>
+        </div>
+      </div>
+
+      <div class="grp keypoints">
+        <label>Key points <span class="hint" style="text-transform:none;letter-spacing:0;">— type the deal in plain words; I'll write the rest</span></label>
+        <textarea id="keypoints" placeholder="Flight: SWISS, Delhi to Zurich, Business 79k, next 30 days only, ex-Delhi&#10;&#10;Last-minute (one bullet per line):&#10;DEL - WAW - LHR&#10;Date - 22 June&#10;Timing - 8:00 AM - 5:10 PM&#10;Layover - Warsaw - 2h 40m&#10;Seats - 3&#10;Non-refundable&#10;LOT Polish Airlines&#10;Price - 89k per seat"></textarea>
+        <button class="gen-btn" id="genBtn">✨ Generate post</button>
+        <label class="upload" id="adWrap" style="margin-top:10px;">📥 Or upload an airline ad to convert
+          <input type="file" id="adFile" accept="image/png,image/jpeg,image/webp">
+        </label>
+        <div class="hint">Mention a price (79k / 1.49L) and it fills pricing. Mention a city (ex-Delhi) and it fills the caption note. No price / city = none added.</div>
+      </div>
+
+      <div class="grp">
+        <label>Layout</label>
+        <div class="seg" id="layoutSeg">
+          <button data-v="A" class="on">A · Moody</button>
+          <button data-v="B">B · Bright</button>
+        </div>
+      </div>
+
+      <div class="grp">
+        <label>Headline colour</label>
+        <div class="swatches" id="colorSeg">
+          <button data-v="#F5EFE0" class="on" style="background:#F5EFE0" title="Cream"></button>
+          <button data-v="#E0935A" style="background:#E0935A" title="Amber"></button>
+          <button data-v="#FFFFFF" style="background:#FFFFFF" title="White"></button>
+          <button data-v="#1E4874" style="background:#1E4874" title="Brand blue (light photos only)"></button>
+        </div>
+        <div class="hint">Brand blue only reads on bright/light photos.</div>
+      </div>
+
+      <div class="grp">
+        <label>Route / destination</label>
+        <input type="text" id="route" placeholder="e.g. Zurich  ·  or  Delhi → Zurich">
+      </div>
+
+      <div class="grp" id="logoGrp">
+        <label id="logoLbl">Airline logo</label>
+        <select id="logo">
+          <option value="">None</option>
+          <optgroup label="Airlines" id="og-airline"></optgroup>
+          <optgroup label="Hotels" id="og-hotel"></optgroup>
+          <option value="__upload">Upload custom…</option>
+        </select>
+        <label class="upload" id="logoUploadWrap" style="margin-top:8px;display:none;">Upload a logo (white / transparent PNG)
+          <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp">
+        </label>
+        <div class="hint">Logos sit on a cream chip so the mark reads on any photo.</div>
+      </div>
+
+      <div class="grp">
+        <button class="suggest" data-for="kicker">✨ Suggest</button>
+        <label>Kicker tag <span class="hint" style="text-transform:none;letter-spacing:0;">(optional — urgency only)</span></label>
+        <input type="text" id="kicker" placeholder="Next 30 days only">
+      </div>
+
+      <div class="grp">
+        <button class="suggest" data-for="headline">✨ Suggest</button>
+        <label>Headline</label>
+        <textarea id="headline" placeholder="Sentence case. Use line breaks for stacked lines."></textarea>
+      </div>
+
+      <div class="grp">
+        <button class="suggest" data-for="sub">✨ Suggest</button>
+        <label>Sub-copy</label>
+        <textarea id="sub" placeholder="One line, single size."></textarea>
+      </div>
+
+      <div class="grp">
+        <label>Pricing <span class="hint" style="text-transform:none;letter-spacing:0;">(optional)</span></label>
+        <div id="prices"></div>
+        <button class="add" id="addPrice">+ Add price row</button>
+      </div>
+
+      <div class="grp">
+        <label>Departure / ex-city note <span class="hint" style="text-transform:none;letter-spacing:0;">(optional · caption only)</span></label>
+        <input type="text" id="exCity" placeholder="ex-Delhi">
+      </div>
+
+      <div class="grp">
+        <label>Background photo</label>
+        <label class="upload">Click to upload a photo
+          <input type="file" id="photo" accept="image/png,image/jpeg,image/webp">
+        </label>
+      </div>
+    </div>
+
+    <!-- preview -->
+    <div class="preview">
+      <div class="stage"><div id="poster"></div></div>
+      <div class="actions">
+        <button class="btn-png" id="dlPng">↓ Download PNG</button>
+        <button class="btn-cap" id="cpCap">Copy caption</button>
+      </div>
+      <div class="toast" id="toast"></div>
+      <div class="cap-box">
+        <label>WhatsApp caption</label>
+        <textarea id="caption"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ CONFIG ============
+// Change this to set your team password.
+const PASSWORD = "ninja";
+
+// ============ password gate ============
+(function () {
+  const gate = document.getElementById('gate'), app = document.getElementById('app');
+  function unlock(){ gate.style.display='none'; app.style.display='block'; init(); }
+  if (sessionStorage.getItem('fcn_ok') === '1') { setTimeout(unlock, 0); }
+  const go = () => {
+    if (document.getElementById('pw').value === PASSWORD) { sessionStorage.setItem('fcn_ok','1'); unlock(); }
+    else { document.getElementById('pwErr').textContent = 'Wrong password.'; }
+  };
+  document.getElementById('pwGo').addEventListener('click', go);
+  document.getElementById('pw').addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
+})();
+
+// ============ state ============
+const state = {
+  type:'flight', layout:'A', color:'#F5EFE0',
+  route:'', cabin:'Business Class', airline:'', hotelName:'', logo:'', logoUrl:null,
+  kicker:'', headline:'', sub:'',
+  prices:[],
+  exCity:'', photo:null
+};
+
+const LOGOS = [
+  ['air-canada','Air Canada','airline'],['air-france','Air France','airline'],['air-india','Air India','airline'],
+  ['ana','ANA','airline'],['british-airways','British Airways','airline'],['cathay-pacific','Cathay Pacific','airline'],
+  ['egyptair','EgyptAir','airline'],['emirates','Emirates','airline'],['etihad','Etihad','airline'],
+  ['ita-airways','ITA Airways','airline'],['japan-airlines','Japan Airlines','airline'],['klm','KLM','airline'],
+  ['lufthansa','Lufthansa','airline'],['lot-polish-airlines','LOT Polish Airlines','airline'],['qatar-airways','Qatar Airways','airline'],
+  ['singapore-airlines','Singapore Airlines','airline'],['swiss','SWISS','airline'],['thai-airways','Thai Airways','airline'],
+  ['turkish-airlines','Turkish Airlines','airline'],['united-airlines','United Airlines','airline'],['virgin-atlantic','Virgin Atlantic','airline'],
+  ['bvlgari-hotels','Bvlgari Hotels','hotel'],['edition','EDITION','hotel'],['jw-marriott','JW Marriott','hotel'],
+  ['the-luxury-collection','The Luxury Collection','hotel'],['the-ritz-carlton','The Ritz-Carlton','hotel'],['st-regis','St. Regis','hotel'],['w-hotels','W Hotels','hotel']
+];
+function populateLogos(){
+  const a=document.getElementById('og-airline'), h=document.getElementById('og-hotel');
+  LOGOS.forEach(l=>{ const o=document.createElement('option'); o.value=l[0]; o.textContent=l[1]; (l[2]==='hotel'?h:a).appendChild(o); });
+}
+
+const CTAS = [
+  'Ask us what this route actually costs',
+  'Find out before you book elsewhere',
+  'You know where to find us',
+  'DM us your route',
+  'Ask us for a quote'
+];
+
+// ============ key-points parsing (deterministic, runs now) ============
+function normPrice(num, unit){
+  unit=(unit||'').toLowerCase();
+  if(unit==='k') return '\u20b9'+num+'K';
+  if(unit==='cr') return '\u20b9'+num+'Cr';
+  if(unit[0]==='l') return '\u20b9'+num+'L';
+  return '\u20b9'+num;
+}
+function parsePrices(text){
+  const out=[];
+  const clauses=text.split(/[\n,;]|\band\b/i);
+  clauses.forEach(cl=>{
+    const pm=cl.match(/(\d+(?:\.\d+)?)\s*(k|l|lakh|lakhs|lac|lacs|cr)\b/i);
+    if(!pm) return;
+    let region='';
+    const rm=cl.match(/\bto\s+(.+)$/i);
+    if(rm){
+      region=rm[1]
+        .replace(/\b(from|starting|start|for|next|only|business|first|class|in|on|by|till|until|ex)\b.*$/i,'')
+        .replace(/[\d\u20b9].*$/,'')
+        .replace(/[.,;\s]+$/,'').trim();
+      if(region.length>24) region='';
+    }
+    out.push({label:region, value:'from '+normPrice(pm[1],pm[2])});
+  });
+  return out;
+}
+function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+const MONTHS=['january','february','march','april','may','june','july','august','september','october','november','december'];
+function monthIdx(w){ w=(w||'').toLowerCase(); if(w.length<3) return -1; return MONTHS.findIndex(m=>m.startsWith(w.slice(0,3))); }
+
+const AIRPORTS={del:'Delhi',bom:'Mumbai',blr:'Bangalore',maa:'Chennai',hyd:'Hyderabad',ccu:'Kolkata',
+lhr:'London',lgw:'London',cdg:'Paris',ory:'Paris',zrh:'Zurich',gva:'Geneva',fra:'Frankfurt',muc:'Munich',
+ams:'Amsterdam',bru:'Brussels',waw:'Warsaw',vie:'Vienna',cph:'Copenhagen',arn:'Stockholm',osl:'Oslo',hel:'Helsinki',
+fco:'Rome',mxp:'Milan',mad:'Madrid',bcn:'Barcelona',lis:'Lisbon',ath:'Athens',ist:'Istanbul',
+jfk:'New York',ewr:'New York',lax:'Los Angeles',sfo:'San Francisco',ord:'Chicago',iad:'Washington',bos:'Boston',
+yyz:'Toronto',yvr:'Vancouver',dxb:'Dubai',auh:'Abu Dhabi',doh:'Doha',sin:'Singapore',bkk:'Bangkok',hkg:'Hong Kong',
+nrt:'Tokyo',hnd:'Tokyo',icn:'Seoul',syd:'Sydney',mel:'Melbourne',kul:'Kuala Lumpur',cgk:'Jakarta',dps:'Bali'};
+function cityFromCode(c){ return AIRPORTS[(c||'').toLowerCase()]||''; }
+
+// Parse "Label - Value" / "Label: Value" bullet lines into a lookup.
+function parseLabeled(kp){
+  const f={};
+  (kp||'').split(/\n/).forEach(line=>{
+    const m=line.match(/^\s*([A-Za-z][A-Za-z .#\/]*?)\s*[:\u2013-]\s*(.+\S)\s*$/);
+    if(m){ const k=m[1].trim().toLowerCase().replace(/\s+/g,' '); if(!f[k]) f[k]=m[2].trim(); }
+  });
+  return f;
+}
+function getField(f, names){
+  for(const n of names){ if(f[n]) return f[n]; }
+  for(const k in f){ for(const n of names){ if(k.indexOf(n)>=0) return f[k]; } }
+  return '';
+}
+// Detect an airport-code route like "DEL - WAW - LHR".
+function findRoute(kp){
+  const m=(kp||'').match(/\b[A-Z]{3}\b(?:\s*[-\u2013\u2192>]\s*\b[A-Z]{3}\b)+/);
+  if(!m) return null;
+  const codes=m[0].split(/[-\u2013\u2192>]/).map(s=>s.trim().toUpperCase()).filter(Boolean);
+  return { display:codes.join(' \u2013 '), codes };
+}
+function parseExCity(text, f, route){
+  const map={del:'Delhi',bom:'Mumbai',blr:'Bangalore',bengaluru:'Bangalore',delhi:'Delhi',mumbai:'Mumbai',bangalore:'Bangalore'};
+  let v=getField(f||{},['dept city','departure city','departure','departing','dep city','from city','ex city','origin']);
+  if(v){ const k=v.toLowerCase().replace(/[^a-z]/g,''); return 'ex-'+(map[k]||cap(v.trim())); }
+  if(route && route.codes && route.codes[0]){ const c=cityFromCode(route.codes[0]); if(c) return 'ex-'+c; }
+  let m=text.match(/\bex[-\s]?(delhi|mumbai|bangalore|bengaluru|del|bom|blr)\b/i) || text.match(/\bfrom\s+(delhi|mumbai|bangalore|bengaluru|del|bom|blr)\b/i);
+  if(!m) return '';
+  return 'ex-'+(map[m[1].toLowerCase()]||m[1]);
+}
+function parseDate(text){
+  let m;
+  if((m=text.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\b/)) && monthIdx(m[2])>=0) return m[1]+' '+cap(MONTHS[monthIdx(m[2])]);
+  if((m=text.match(/\b([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\b/)) && monthIdx(m[1])>=0) return cap(MONTHS[monthIdx(m[1])])+' '+m[2];
+  return '';
+}
+function parseKicker(text){
+  const t=text.toLowerCase();
+  let m;
+  if((m=t.match(/next\s+(\d+)\s+days?/))) return 'Next '+m[1]+' days only';
+  if((m=t.match(/(\d+)\s+days?\s+only/))) return m[1]+' days only';
+  if(/last[-\s]?minute/.test(t)) return 'Last-minute only';
+  if(/this\s+week\b/.test(t)) return 'This week only';
+  if(/this\s+weekend/.test(t)) return 'This weekend only';
+  if((m=text.match(/\b(?:by|till|until|before)\s+(\d{1,2}\s*[A-Za-z]{3,9}|[A-Za-z]{3,9}\s*\d{1,2})\b/i))) return 'Book by '+m[1];
+  const d=parseDate(text); if(d) return d;
+  if(/few\s+seats|limited|hurry|selling fast/.test(t)) return 'Limited seats';
+  return '';
+}
+function detectLogo(text){
+  const norm=s=>s.toLowerCase().replace(/[.\u2019']/g,'').replace(/\s+/g,' ').trim();
+  const t=norm(text);
+  // longest names first to avoid partial hits
+  const sorted=[...LOGOS].sort((a,b)=>b[1].length-a[1].length);
+  for(const l of sorted){
+    if(t.indexOf(norm(l[1]))>=0) return l;
+  }
+  // common aliases
+  if(/\bba\b/.test(t)) return LOGOS.find(l=>l[0]==='british-airways');
+  if(/\bsq\b/.test(t)) return LOGOS.find(l=>l[0]==='singapore-airlines');
+  return null;
+}
+function parseRoute(text, regions){
+  // explicit "X to Y" or "X -> Y"
+  let m=text.match(/([A-Za-z][A-Za-z .]*?)\s*(?:\u2192|->|to)\s*([A-Za-z][A-Za-z .]*?)(?:[,.;\n]|\s+(?:business|first|\d|next|ex|from)|$)/i);
+  if(m){
+    const from=m[1].trim(), to=m[2].trim();
+    const cities=['delhi','mumbai','bangalore','bengaluru','del','bom','blr'];
+    if(cities.includes(from.toLowerCase())) return to; // destination only
+    return to;
+  }
+  if(regions.length===1 && regions[0]) return regions[0];
+  return '';
+}
+
+function localGenerate(kp){
+  const f=parseLabeled(kp);
+  const route=findRoute(kp);
+  const prices=parsePrices(kp);
+  const regions=prices.map(p=>p.label).filter(Boolean);
+  const exCity=parseExCity(kp, f, route);
+  const kicker=parseKicker(kp);
+  const logo=detectLogo(kp);
+  let type=state.type;
+  if(state.type!=='lastmin'){ if(logo){ type = logo[2]==='hotel' ? 'hotel' : 'airline'; } }
+  const airline = (logo&&logo[2]==='airline')?logo[1]:'';
+  const hotelName = (logo&&logo[2]==='hotel')?logo[1]:'';
+
+  const hasFirst=/first\s*class/i.test(kp), hasBiz=/business/i.test(kp);
+  const cabin = (hasFirst&&hasBiz)?'Business & First Class':(hasFirst?'First Class':'Business Class');
+
+  // ---------- last-minute: detail-dense flight ----------
+  if(type==='lastmin'){
+    const timing=getField(f,['timing','departure time','dep time','time']);
+    const layover=getField(f,['layover','stopover','via']);
+    const stopsRaw=getField(f,['no. of stops','number of stops','no of stops','stops']);
+    const seatsRaw=getField(f,['no. of seats','number of seats','no of seats','seats available','seats']);
+    const seatNum=(seatsRaw.match(/\d+/)||[])[0];
+    const routeStr = route ? route.display : (getField(f,['route','sector','sectors'])||'');
+    const dest = route && route.codes.length ? cityFromCode(route.codes[route.codes.length-1]) : '';
+
+    const parts=[];
+    if(routeStr) parts.push(routeStr);
+    if(timing) parts.push('Timing '+timing);
+    if(layover) parts.push('Layover '+layover);
+    if(stopsRaw){ const n=(stopsRaw.match(/\d+/)||[])[0]; parts.push(n ? (n+' stop'+(+n===1?'':'s')) : stopsRaw); }
+    if(/non[-\s]?refundable/i.test(kp)) parts.push('Non-refundable');
+    else if(/\brefundable\b/i.test(kp)) parts.push('Refundable');
+    const sub = parts.join('  |  ');
+
+    let headline;
+    const seatTxt = seatNum ? (seatNum+' seat'+(+seatNum===1?'':'s')+' left.') : '';
+    if(dest) headline = dest+' calling.'+(seatTxt?('\n'+seatTxt):'\nLast call.');
+    else if(routeStr) headline = 'Last-minute fare.\n'+(seatTxt||'Move fast.');
+    else headline = 'Pack tonight.\nThank us later.';
+
+    return { type, layout:state.layout, route:routeStr||dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
+  }
+
+  // ---------- flight / airline / hotel ----------
+  const dest = (route ? cityFromCode(route.codes[route.codes.length-1]) : '') || parseRoute(kp, regions) || (regions.length===1?regions[0]:'');
+  const multi = regions.length>1;
+  let headline, sub;
+  if(type==='hotel'){
+    headline = hotelName ? (hotelName+',\nfor rather less.') : 'Five-star stays.\nFour-figure regret avoided.';
+    sub = (hotelName?hotelName:'Suites the brochure charges double for')+' \u2014 at a rate you won\u2019t find on the booking sites.';
+  } else if(type==='airline'){
+    headline = dest ? (dest+',\nup front.') : ((airline||'Business')+',\nat half the going rate.');
+    sub = cabin+' on '+(airline||'a top airline')+(dest?(' to '+dest):'')+' \u2014 booked smart, priced like it.';
+  } else if(multi){
+    headline = 'Lowest fares\nwe\u2019ve ever run.';
+    sub = cabin+' to '+regions.slice(0,-1).join(', ')+' and '+regions.slice(-1)+' \u2014 the cheapest seats we\u2019ve put out.';
+  } else {
+    headline = dest ? (dest+',\nthe way it should be flown.') : 'The seats the rest\nof the cabin overpaid for.';
+    sub = cabin+(dest?(' to '+dest):'')+' \u2014 at a price the rest of the cabin won\u2019t believe.';
+  }
+  return { type, layout:state.layout, route:dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
+}
+
+// Calls the Netlify function once it exists + a key is set; throws otherwise so we fall back.
+async function aiGenerate(kp, image){
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 30000);
+  try {
+    const res = await fetch('/.netlify/functions/generate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ keypoints: kp, type: state.type, image: image||undefined }),
+      signal: ctrl.signal
+    });
+    if(!res.ok) throw new Error('fn '+res.status);
+    return await res.json();
+  } finally { clearTimeout(timer); }
+}
+
+function applyGenerated(g){
+  if(!g) return;
+  // type + dependent logo
+  if(g.type && g.type!==state.type){
+    state.type=g.type;
+    document.querySelectorAll('#typeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.v===g.type));
+    applyType();
+  }
+  if(g.logo){
+    state.logo=g.logo;
+    state.logoUrl='logos/'+g.logo+'.png';
+    const sel=document.getElementById('logo'); if(sel) sel.value=g.logo;
+  }
+  state.airline=g.airline||''; state.hotelName=g.hotelName||'';
+  if(typeof g.route==='string'){ state.route=g.route; document.getElementById('route').value=g.route; }
+  state.headline=g.headline||''; document.getElementById('headline').value=state.headline;
+  state.sub=g.sub||''; document.getElementById('sub').value=state.sub;
+  state.kicker=g.kicker||''; document.getElementById('kicker').value=state.kicker;
+  state.exCity=g.exCity||''; document.getElementById('exCity').value=state.exCity;
+  state.prices=Array.isArray(g.prices)?g.prices:[];
+  renderPriceInputs();
+  render();
+}
+
+async function generatePost(image){
+  const kp=document.getElementById('keypoints').value.trim();
+  if(!kp && !image){ toast('Add a few key points first'); return; }
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true; btn.classList.add('busy'); btn.textContent= image?'Reading ad\u2026':'Generating\u2026';
+  let g;
+  try { g=await aiGenerate(kp, image); }
+  catch(e){
+    if(image){ toast('Ad reading needs the live AI key \u2014 type the deal in key points for now'); btn.disabled=false; btn.classList.remove('busy'); btn.textContent='\u2728 Generate post'; return; }
+    g=localGenerate(kp);
+  }
+  applyGenerated(g);
+  btn.disabled=false; btn.classList.remove('busy'); btn.textContent='\u2728 Generate post';
+  toast('Post generated \u2014 tweak anything you like');
+}
+
+// ============ copy generator (single-field Suggest) ============
+function gen(field){
+  const kp=(document.getElementById('keypoints')||{}).value||'';
+  if(kp.trim()){
+    const g=localGenerate(kp);
+    if(field==='headline') return g.headline;
+    if(field==='sub') return g.sub;
+    if(field==='kicker') return g.kicker;
+  }
+  const r = state.route.trim(), a = state.airline.trim();
+  const dest = r.replace(/.*[\u2192>-]\s*/,'').trim() || r;
+  if(field==='kicker') return state.kicker || 'Next 30 days only';
+  if (state.type==='hotel'){
+    if (field==='headline') return 'Five-star stays.\nSuspiciously un-five-star prices.';
+    return (state.hotelName ? (state.hotelName + ' \u2014 below what you\u2019d find online.') : 'Ritz-Carlton, St. Regis, Edition and more \u2014 all below what you\u2019d find online.');
+  }
+  if (state.type==='airline'){
+    if (field==='headline') return dest ? (dest + '. ' + (a||'Business') + ' business class.') : 'The seats the rest of the cabin overpaid for.';
+    return ('Business Class on ' + (a||'a top airline') + (dest?(' to '+dest):'') + ' \u2014 booked smart, priced like it.');
+  }
+  // flight
+  if (field==='headline') return dest ? (dest + ',\nthe way it should be flown.') : 'Lowest fares we\u2019ve ever run.';
+  return ('Business &amp; First Class' + (dest?(' to '+dest):'') + ' \u2014 at a price the rest of the cabin won\u2019t believe.');
+}
+
+function buildCaption(){
+  const head = (state.headline||'').replace(/\n/g,' ').trim();
+  const priceLine = state.prices.filter(p=>p.value).map(p=> (p.label?(p.label+' '):'')+p.value).join(' \u00b7 ');
+  const cta = CTAS[Math.floor(Math.random()*CTAS.length)];
+  const lines = [];
+  if (head) lines.push(head);
+  if (state.sub) lines.push(state.sub);
+  let meta = priceLine;
+  if (state.exCity) meta += (meta?'. ':'') + state.exCity;
+  if (meta) lines.push(meta + '.');
+  lines.push(cta + ' \u2192 [link]');
+  return lines.join('\n\n');
+}
+
+// ============ poster renderer ============
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render(){
+  const dark = state.layout==='A';
+  const scrim = dark
+    ? 'linear-gradient(180deg, rgba(8,18,32,0.86) 0%, rgba(8,18,32,0.42) 32%, rgba(8,18,32,0.40) 56%, rgba(8,18,32,0.92) 100%)'
+    : 'linear-gradient(180deg, rgba(8,18,32,0.62) 0%, rgba(8,18,32,0.18) 30%, rgba(8,18,32,0.34) 60%, rgba(8,18,32,0.90) 100%)';
+  const bg = state.photo
+    ? '<img src="'+state.photo+'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
+    : '';
+  const hl = esc(state.headline).replace(/\n/g,'<br>');
+  const kicker = state.kicker ? (
+    '<div style="display:flex;align-items:center;gap:14px;margin:46px 0 22px 0;">'+
+      '<span style="width:42px;height:2px;background:#E0935A;display:block;"></span>'+
+      '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:26px;letter-spacing:0.14em;text-transform:uppercase;color:#E0935A;font-weight:700;">'+esc(state.kicker)+'</span>'+
+    '</div>') : '<div style="height:46px;"></div>';
+  const logoBlock = state.logoUrl
+    ? '<div style="align-self:flex-start;background:#F5EFE0;border-radius:4px;padding:13px 18px;margin:0 0 28px 0;"><img src="'+state.logoUrl+'" alt="" style="height:52px;width:auto;display:block;"></div>'
+    : '';
+  let priceRows = state.prices.filter(p=>p.value).map(function(p,i,arr){
+    const border = i<arr.length-1 ? 'border-bottom:1px solid rgba(245,239,224,0.16);' : '';
+    const single = arr.length===1;
+    if (single){
+      return '<div style="display:flex;align-items:baseline;padding:18px 0;">'+
+        '<span style="font-family:\'DM Serif Display\',serif;font-size:54px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
+    }
+    return '<div style="display:flex;align-items:baseline;justify-content:space-between;padding:18px 0;'+border+'">'+
+      '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:25px;letter-spacing:0.1em;text-transform:uppercase;color:#F5EFE0;opacity:0.82;font-weight:600;">'+esc(p.label)+'</span>'+
+      '<span style="font-family:\'DM Serif Display\',serif;font-size:38px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
+  }).join('');
+  const pricing = priceRows ? '<div style="border-top:1px solid rgba(245,239,224,0.28);max-width:840px;">'+priceRows+'</div>' : '';
+
+  document.getElementById('poster').innerHTML =
+    bg +
+    '<div style="position:absolute;inset:0;background:'+scrim+';"></div>'+
+    '<div style="position:absolute;inset:0;padding:84px;display:flex;flex-direction:column;">'+
+      '<div style="display:flex;align-items:center;gap:14px;align-self:flex-end;color:#F5EFE0;">'+
+        '<img src="assets/fcn-mark-white.png" alt="FCN" style="height:48px;width:auto;display:block;">'+
+        '<div style="font-family:\'Glacial Indifference\',sans-serif;font-size:15px;letter-spacing:0.34em;font-weight:600;">FIRST CLASS NINJAS</div>'+
+      '</div>'+
+      kicker +
+      '<h1 style="font-family:\'DM Serif Display\',serif;font-weight:400;color:'+state.color+';font-size:100px;line-height:0.99;margin:0;letter-spacing:-0.01em;">'+hl+'</h1>'+
+      '<div style="flex:1;"></div>'+
+      (state.sub?'<p style="font-family:\'Glacial Indifference\',sans-serif;color:#F5EFE0;opacity:0.9;font-size:31px;line-height:1.42;margin:0 0 30px 0;max-width:840px;font-weight:500;">'+esc(state.sub)+'</p>':'')+
+      logoBlock +
+      pricing +
+    '</div>';
+  document.getElementById('caption').value = buildCaption();
+}
+
+// ============ wiring ============
+function seg(id, key){
+  document.getElementById(id).addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); state[key]=b.dataset.v;
+    if(key==='type') applyType();
+    render();
+  });
+}
+
+function applyType(){
+  const t = state.type;
+  const grp = document.getElementById('logoGrp');
+  const sel = document.getElementById('logo');
+  const ogA = document.getElementById('og-airline');
+  const ogH = document.getElementById('og-hotel');
+  const lbl = document.getElementById('logoLbl');
+  grp.style.display='block';
+  const hotels = (t==='hotel');
+  ogA.style.display = hotels?'none':'';
+  ogH.style.display = hotels?'':'none';
+  if(lbl) lbl.textContent = hotels ? 'Hotel logo (optional)' : 'Airline logo (optional)';
+  const item = LOGOS.find(l=>l[0]===state.logo);
+  if(item){ const want = hotels?'hotel':'airline'; if(item[2]!==want){ sel.value=''; state.logo=''; state.logoUrl=null; state.airline=''; state.hotelName=''; } }
+}
+
+function renderPriceInputs(){
+  const wrap = document.getElementById('prices');
+  wrap.innerHTML = '';
+  state.prices.forEach((p,idx)=>{
+    const row = document.createElement('div'); row.className='price-row';
+    row.innerHTML = '<input type="text" placeholder="Label (optional)" value="'+esc(p.label)+'">'+
+                    '<input type="text" placeholder="from \u20b979K" value="'+esc(p.value)+'">'+
+                    '<button title="Remove">\u00d7</button>';
+    const ins = row.querySelectorAll('input');
+    ins[0].addEventListener('input',()=>{ state.prices[idx].label=ins[0].value; render(); });
+    ins[1].addEventListener('input',()=>{ state.prices[idx].value=ins[1].value; render(); });
+    row.querySelector('button').addEventListener('click',()=>{ state.prices.splice(idx,1); if(!state.prices.length) state.prices.push({label:'',value:''}); renderPriceInputs(); render(); });
+    wrap.appendChild(row);
+  });
+}
+
+function bindText(id,key){ const el=document.getElementById(id); el.addEventListener('input',()=>{ state[key]=el.value; render(); }); }
+
+function fileToUrl(input, cb){
+  const f = input.files && input.files[0]; if(!f) return;
+  const rd = new FileReader(); rd.onload = ()=> cb(rd.result); rd.readAsDataURL(f);
+}
+
+function init(){
+  if(window.__inited) return; window.__inited=true;
+  seg('typeSeg','type'); seg('layoutSeg','layout'); seg('colorSeg','color');
+  bindText('route','route'); bindText('kicker','kicker');
+  bindText('headline','headline'); bindText('sub','sub'); bindText('exCity','exCity');
+  renderPriceInputs();
+  document.getElementById('addPrice').addEventListener('click',()=>{ state.prices.push({label:'',value:''}); renderPriceInputs(); render(); });
+
+  document.querySelectorAll('.suggest').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const f = btn.dataset.for; const v = gen(f);
+      state[f]=v; document.getElementById(f).value=v; render();
+    });
+  });
+
+  document.getElementById('photo').addEventListener('change',e=> fileToUrl(e.target, url=>{ state.photo=url; render(); }));
+  populateLogos();
+  const logoSel=document.getElementById('logo'), uploadWrap=document.getElementById('logoUploadWrap');
+  logoSel.addEventListener('change',()=>{
+    const v=logoSel.value;
+    if(v==='__upload'){ uploadWrap.style.display='block'; return; }
+    uploadWrap.style.display='none';
+    state.logo=v;
+    const item=LOGOS.find(l=>l[0]===v);
+    state.logoUrl = v ? 'logos/'+v+'.png' : null;
+    state.airline = (item&&item[2]==='airline')?item[1]:'';
+    state.hotelName = (item&&item[2]==='hotel')?item[1]:'';
+    render();
+  });
+  document.getElementById('logoFile').addEventListener('change',e=> fileToUrl(e.target, url=>{ state.logoUrl=url; render(); }));
+  document.getElementById('genBtn').addEventListener('click', ()=>generatePost());
+  document.getElementById('keypoints').addEventListener('keydown', e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='Enter') generatePost(); });
+  document.getElementById('adFile').addEventListener('change', e=> fileToUrl(e.target, url=>{ generatePost(url); }));
+  applyType();
+
+  document.getElementById('dlPng').addEventListener('click',()=>{
+    if(!window.fcnExportPoster){ alert('Export engine still loading.'); return; }
+    const name = 'FCN-' + (state.route.replace(/[^a-z0-9]+/gi,'-')||'post') + '-' + state.layout;
+    window.fcnExportPoster('poster', name);
+  });
+  document.getElementById('cpCap').addEventListener('click',()=>{
+    navigator.clipboard.writeText(document.getElementById('caption').value).then(()=>toast('Caption copied'));
+  });
+
+  render();
+}
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
+</script>
+
+</body>
+</html>
