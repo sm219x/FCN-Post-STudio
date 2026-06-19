@@ -100,3 +100,19 @@ PNG (canvas exporter `poster-export.js`) + Copy caption. 28 logos in `site/logos
   reads `ANTHROPIC_API_KEY` (Netlify env var) and also accepts an uploaded airline-ad image
   (vision) to auto-extract a deal. Deploying functions needs a Git/CLI-linked Netlify site, not
   pure drag-drop. Keep the function's LOGOS array in sync with index.html.
+- **Image input:** ad upload/drag/paste is downscaled client-side (`downscaleImage`) before
+  POSTing — Netlify functions have a hard 10s sync limit, so keep the vision model fast
+  (`claude-3-5-sonnet-20241022`) and images small. Errors now surface in a toast.
+
+## Deployment facts (current setup)
+- Live site: `aquamarine-wisp-4fd36c.netlify.app` (Netlify site id `94c840f1-835b-4aab-b5bc-170b3367b155`).
+  Password is `ninja` (top of `site/index.html`). Anthropic key is set as the `ANTHROPIC_API_KEY`
+  Netlify env var (user opted not to rotate; it's fine — app is password-gated, no sensitive data).
+- Repo: `github.com/sm219x/FCN-Post-STudio` (branch `main`), auto-deploys to the site. The whole
+  project sits nested under a top folder `First Class Ninjas Post Studio Git/`, and the app is in
+  its `site/` subfolder — so Netlify build settings are: Base = empty, Publish =
+  `First Class Ninjas Post Studio Git/site`, Functions = `First Class Ninjas Post Studio Git/site/netlify/functions`.
+  Paths are case-sensitive on the build server.
+- Claude can READ the repo (github_* tools) but cannot PUSH. To ship changes: user re-syncs the
+  updated project folder to the repo (same folder name) → Netlify auto-rebuilds (~30s). Netlify
+  CLI is the friction-free alternative.

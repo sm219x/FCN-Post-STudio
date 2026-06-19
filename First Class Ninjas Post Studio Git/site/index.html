@@ -118,10 +118,10 @@
         <label>Key points <span class="hint" style="text-transform:none;letter-spacing:0;">— type the deal in plain words; I'll write the rest</span></label>
         <textarea id="keypoints" placeholder="Flight: SWISS, Delhi to Zurich, Business 79k, next 30 days only, ex-Delhi&#10;&#10;Last-minute (one bullet per line):&#10;DEL - WAW - LHR&#10;Date - 22 June&#10;Timing - 8:00 AM - 5:10 PM&#10;Layover - Warsaw - 2h 40m&#10;Seats - 3&#10;Non-refundable&#10;LOT Polish Airlines&#10;Price - 89k per seat"></textarea>
         <button class="gen-btn" id="genBtn">✨ Generate post</button>
-        <label class="upload" id="adWrap" style="margin-top:10px;">📥 Or upload an airline ad to convert
+        <label class="upload" id="adWrap" style="margin-top:10px;">📥 Upload, drag, or paste an airline ad to convert
           <input type="file" id="adFile" accept="image/png,image/jpeg,image/webp">
         </label>
-        <div class="hint">Mention a price (79k / 1.49L) and it fills pricing. Mention a city (ex-Delhi) and it fills the caption note. No price / city = none added.</div>
+        <div class="hint">Tip: screenshot an airline’s deal and paste it (⌘V / Ctrl+V) anywhere — it’ll read the deal and build the post. Drag a photo onto the preview to set the background.</div>
       </div>
 
       <div class="grp">
@@ -448,16 +448,40 @@ function localGenerate(kp){
 // Calls the Netlify function once it exists + a key is set; throws otherwise so we fall back.
 async function aiGenerate(kp, image){
   const ctrl = new AbortController();
-  const timer = setTimeout(()=>ctrl.abort(), 30000);
+  const timer = setTimeout(()=>ctrl.abort(), 28000);
   try {
     const res = await fetch('/.netlify/functions/generate', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ keypoints: kp, type: state.type, image: image||undefined }),
       signal: ctrl.signal
     });
-    if(!res.ok) throw new Error('fn '+res.status);
-    return await res.json();
+    const txt = await res.text();
+    if(!res.ok){
+      let d=txt; try{ const j=JSON.parse(txt); d=j.detail||j.error||txt; }catch(e){}
+      throw new Error((res.status===404?'function not deployed':('server '+res.status))+(d?': '+String(d).slice(0,140):''));
+    }
+    return JSON.parse(txt);
+  } catch(e){
+    if(e.name==='AbortError') throw new Error('timed out \u2014 the ad image may be too large or the server is cold; try again');
+    throw e;
   } finally { clearTimeout(timer); }
+}
+
+// Downscale a dataURL image so vision is fast and the payload stays small.
+function downscaleImage(dataUrl, maxDim, quality){
+  return new Promise((resolve)=>{
+    const img=new Image();
+    img.onload=()=>{
+      let {width:w, height:h}=img;
+      const scale=Math.min(1, maxDim/Math.max(w,h));
+      w=Math.round(w*scale); h=Math.round(h*scale);
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      try{ resolve(c.toDataURL('image/jpeg', quality||0.85)); }catch(e){ resolve(dataUrl); }
+    };
+    img.onerror=()=>resolve(dataUrl);
+    img.src=dataUrl;
+  });
 }
 
 function applyGenerated(g){
@@ -490,10 +514,15 @@ async function generatePost(image){
   const btn=document.getElementById('genBtn');
   btn.disabled=true; btn.classList.add('busy'); btn.textContent= image?'Reading ad\u2026':'Generating\u2026';
   let g;
-  try { g=await aiGenerate(kp, image); }
+  try {
+    let img=image;
+    if(img) img=await downscaleImage(img, 1100, 0.85); // shrink before sending
+    g=await aiGenerate(kp, img);
+  }
   catch(e){
-    if(image){ toast('Ad reading needs the live AI key \u2014 type the deal in key points for now'); btn.disabled=false; btn.classList.remove('busy'); btn.textContent='\u2728 Generate post'; return; }
-    g=localGenerate(kp);
+    btn.disabled=false; btn.classList.remove('busy'); btn.textContent='\u2728 Generate post';
+    if(image){ toast('Couldn\u2019t read the ad \u2014 '+(e.message||e), 6000); return; }
+    g=localGenerate(kp); applyGenerated(g); toast('Generated from key points'); return;
   }
   applyGenerated(g);
   btn.disabled=false; btn.classList.remove('busy'); btn.textContent='\u2728 Generate post';
@@ -639,6 +668,20 @@ function fileToUrl(input, cb){
   const f = input.files && input.files[0]; if(!f) return;
   const rd = new FileReader(); rd.onload = ()=> cb(rd.result); rd.readAsDataURL(f);
 }
+function readImageFile(file, cb){
+  if(!file || !/^image\//.test(file.type)) return false;
+  const rd = new FileReader(); rd.onload = ()=> cb(rd.result); rd.readAsDataURL(file);
+  return true;
+}
+// Pull the first image out of a drop or paste event.
+function imageFromEvent(e){
+  const dt = e.dataTransfer || e.clipboardData;
+  if(!dt) return null;
+  if(dt.files && dt.files.length){ for(const f of dt.files){ if(/^image\//.test(f.type)) return f; } }
+  if(dt.items && dt.items.length){ for(const it of dt.items){ if(it.kind==='file' && /^image\//.test(it.type)) return it.getAsFile(); } }
+  return null;
+}
+async function setPhoto(dataUrl){ state.photo = await downscaleImage(dataUrl, 1800, 0.9); render(); }
 
 function init(){
   if(window.__inited) return; window.__inited=true;
@@ -655,7 +698,7 @@ function init(){
     });
   });
 
-  document.getElementById('photo').addEventListener('change',e=> fileToUrl(e.target, url=>{ state.photo=url; render(); }));
+  document.getElementById('photo').addEventListener('change',e=> fileToUrl(e.target, url=>{ setPhoto(url); }));
   populateLogos();
   const logoSel=document.getElementById('logo'), uploadWrap=document.getElementById('logoUploadWrap');
   logoSel.addEventListener('change',()=>{
@@ -675,6 +718,29 @@ function init(){
   document.getElementById('adFile').addEventListener('change', e=> fileToUrl(e.target, url=>{ generatePost(url); }));
   applyType();
 
+  // ----- drag / drop / paste images -----
+  const kpCard = document.querySelector('.keypoints');
+  const stage = document.querySelector('.stage');
+  const stop = e=>{ e.preventDefault(); e.stopPropagation(); };
+  function wireDrop(el, handler){
+    if(!el) return;
+    ['dragenter','dragover'].forEach(ev=> el.addEventListener(ev, e=>{ stop(e); el.style.outline='2px dashed var(--blue)'; el.style.outlineOffset='3px'; }));
+    ['dragleave','dragend'].forEach(ev=> el.addEventListener(ev, e=>{ stop(e); el.style.outline=''; }));
+    el.addEventListener('drop', e=>{ stop(e); el.style.outline=''; const f=imageFromEvent(e); if(f) readImageFile(f, handler); });
+  }
+  // Drop an ad onto the key-points card -> read & generate.
+  wireDrop(kpCard, url=> generatePost(url));
+  // Drop a photo onto the poster preview -> set background.
+  wireDrop(stage, url=> setPhoto(url));
+  // Paste an image anywhere (outside text fields) -> treat as an ad to read.
+  window.addEventListener('paste', e=>{
+    const t=e.target, tag=(t&&t.tagName||'').toLowerCase();
+    const f=imageFromEvent(e);
+    if(!f) return;
+    e.preventDefault();
+    readImageFile(f, url=> generatePost(url));
+  });
+
   document.getElementById('dlPng').addEventListener('click',()=>{
     if(!window.fcnExportPoster){ alert('Export engine still loading.'); return; }
     const name = 'FCN-' + (state.route.replace(/[^a-z0-9]+/gi,'-')||'post') + '-' + state.layout;
@@ -687,7 +753,7 @@ function init(){
   render();
 }
 
-function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
+function toast(msg, ms){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'), ms||1600); }
 </script>
 
 </body>
