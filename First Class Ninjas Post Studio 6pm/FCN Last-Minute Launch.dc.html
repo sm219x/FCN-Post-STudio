@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/glacial-indifference" rel="stylesheet">
+  <script src="./posts/image-slot.js"></script>
+  <script src="./posts/poster-export.js"></script>
+  <style>
+    *{ box-sizing:border-box; }
+    body{ margin:0; }
+  </style>
+</helmet>
+
+<div style="min-width:100%; width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; background:#e7e5df; font-family:'Glacial Indifference',sans-serif;">
+
+  <div style="margin:0 0 28px 4px;">
+    <div style="font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#0C1F35; font-weight:600;">First Class Ninjas — Post studio</div>
+    <div style="font-size:13px; color:#0C1F35; opacity:0.55; margin-top:4px;">1080 × 1350 · WhatsApp / Instagram portrait. Drag a photo onto a poster (or click to browse). Hit ↓ PNG to export full-res.</div>
+  </div>
+
+  <div style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C0563A; font-weight:700; margin:0 0 16px 4px;">01 · Last-Minute group launch</div>
+
+  <div style="display:flex; gap:56px; align-items:flex-start;">
+
+    <!-- ============ VARIATION A — MOODY ============ -->
+    <div style="flex:none; width:454px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:0 0 14px 2px;">
+        <div style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; font-weight:600; white-space:nowrap;">A · Moody</div>
+        <div style="display:flex; gap:8px;">
+          <button onClick="{{ downloadA }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid #0C1F35; background:#0C1F35; color:#fff; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↓ PNG</button>
+          <button onClick="{{ changeA }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid rgba(12,31,53,0.28); background:#fff; color:#0C1F35; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↻ Change photo</button>
+          <button onClick="{{ removeA }}" style="padding:7px 14px; border-radius:999px; border:1.5px solid rgba(192,107,78,0.4); background:#fff; color:#C0563A; font-family:'Glacial Indifference',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.04em; cursor:pointer;">Remove</button>
+        </div>
+      </div>
+
+      <div style="width:454px; height:567px; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+      <div id="poster-lastmin-a" style="position:relative; width:1080px; height:1350px; transform:scale(0.42); transform-origin:top left; border-radius:2px; overflow:hidden;">
+        <image-slot id="fcn-lastmin-a" shape="rect" fit="cover" placeholder="Drag a moody business / first-class cabin photo here" style="position:absolute; inset:0; width:100%; height:100%; display:block;"></image-slot>
+
+        <!-- scrim -->
+        <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(8,18,32,0.86) 0%, rgba(8,18,32,0.42) 32%, rgba(8,18,32,0.40) 56%, rgba(8,18,32,0.92) 100%);"></div>
+
+        <!-- content -->
+        <div style="position:absolute; inset:0; padding:84px; display:flex; flex-direction:column; pointer-events:none;">
+
+          <div style="display:flex; align-items:center; gap:14px; align-self:flex-end; color:#F5EFE0; pointer-events:auto;">
+            <img src="posts/fcn-mark-white.png" alt="FCN" style="height:48px; width:auto; display:block;">
+            <div style="font-family:'Glacial Indifference',sans-serif; font-size:15px; letter-spacing:0.34em; font-weight:600;">FIRST CLASS NINJAS</div>
+          </div>
+
+          <h1 style="font-family:'DM Serif Display',serif; font-weight:400; color:#E0935A; font-size:104px; line-height:0.98; margin:48px 0 0 0; letter-spacing:-0.01em; text-wrap:balance; pointer-events:auto;">Last-minute.<br>Lowest ever.<br>Gone by morning.</h1>
+
+          <div style="flex:1;"></div>
+
+          <p style="font-family:'Glacial Indifference',sans-serif; color:#F5EFE0; opacity:0.9; font-size:31px; line-height:1.42; margin:0 0 38px 0; max-width:840px; font-weight:500; pointer-events:auto;">A new group, one job: the cheapest Business &amp; First Class seats we've ever put out — up to 9 seats, non-refundable only, which is exactly why they're this cheap.</p>
+
+          <div style="border-top:1px solid rgba(245,239,224,0.28); max-width:780px; pointer-events:auto;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; padding:18px 0; border-bottom:1px solid rgba(245,239,224,0.16);">
+              <span style="font-family:'Glacial Indifference',sans-serif; font-size:25px; letter-spacing:0.1em; text-transform:uppercase; color:#F5EFE0; opacity:0.82; font-weight:600;">Europe</span>
+              <span style="font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; color:#E0935A;">from ₹79K</span>
+            </div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between; padding:18px 0; border-bottom:1px solid rgba(245,239,224,0.16);">
+              <span style="font-family:'Glacial Indifference',sans-serif; font-size:25px; letter-spacing:0.1em; text-transform:uppercase; color:#F5EFE0; opacity:0.82; font-weight:600;">London</span>
+              <span style="font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; color:#E0935A;">from ₹89K</span>
+            </div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between; padding:18px 0;">
+              <span style="font-family:'Glacial Indifference',sans-serif; font-size:25px; letter-spacing:0.1em; text-transform:uppercase; color:#F5EFE0; opacity:0.82; font-weight:600;">USA</span>
+              <span style="font-family:'DM Serif Display',serif; font-size:36px; font-weight:400; color:#E0935A;">from ₹1.49L</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </div>
+
+      <!-- caption A -->
+      <div style="width:454px; background:#ffffff; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.08); padding:28px 30px; margin-top:20px;">
+        <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; opacity:0.5; font-weight:600; margin-bottom:10px;">WhatsApp caption</div>
+        <p style="font-family:'Glacial Indifference',sans-serif; font-size:13px; line-height:1.55; color:#0C1F35; margin:0; white-space:pre-line;">New group, one job: the seats that disappear by morning.
+
+FCN Last-Minute is live. Our lowest pricing ever on Business &amp; First Class — up to 9 seats, non-refundable only, which is exactly why they're this cheap.
+
+Europe from ₹79K. London from ₹89K. USA from ₹1.49L. Ex-Delhi.
+
+Blink and they're gone. Join the group → [link]</p>
+      </div>
+    </div>
+
+    <!-- ============ VARIATION B — BRIGHT / EDITORIAL ============ -->
+    <div style="flex:none; width:454px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:0 0 14px 2px;">
+        <div style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; font-weight:600; white-space:nowrap;">B · Bright</div>
+        <div style="display:flex; gap:8px;">
+          <button onClick="{{ downloadB }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid #0C1F35; background:#0C1F35; color:#fff; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↓ PNG</button>
+          <button onClick="{{ changeB }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid rgba(12,31,53,0.28); background:#fff; color:#0C1F35; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↻ Change photo</button>
+          <button onClick="{{ removeB }}" style="padding:7px 14px; border-radius:999px; border:1.5px solid rgba(192,107,78,0.4); background:#fff; color:#C0563A; font-family:'Glacial Indifference',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.04em; cursor:pointer;">Remove</button>
+        </div>
+      </div>
+
+      <div style="width:454px; height:567px; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+      <div id="poster-lastmin-b" style="position:relative; width:1080px; height:1350px; transform:scale(0.42); transform-origin:top left; border-radius:2px; overflow:hidden;">
+        <image-slot id="fcn-lastmin-b" shape="rect" fit="cover" placeholder="Drag a bright destination or cabin photo here" style="position:absolute; inset:0; width:100%; height:100%; display:block;"></image-slot>
+
+        <!-- scrim (lighter / warmer) -->
+        <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(8,18,32,0.62) 0%, rgba(8,18,32,0.18) 30%, rgba(8,18,32,0.34) 60%, rgba(8,18,32,0.90) 100%);"></div>
+
+        <!-- content -->
+        <div style="position:absolute; inset:0; padding:84px; display:flex; flex-direction:column; pointer-events:none;">
+
+          <div style="display:flex; align-items:center; gap:14px; align-self:flex-end; color:#F5EFE0; pointer-events:auto;">
+            <img src="posts/fcn-mark-white.png" alt="FCN" style="height:48px; width:auto; display:block;">
+            <div style="font-family:'Glacial Indifference',sans-serif; font-size:15px; letter-spacing:0.34em; font-weight:600;">FIRST CLASS NINJAS</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; margin:56px 0 24px 0; pointer-events:auto;">
+            <span style="width:42px; height:2px; background:#E0935A; display:block;"></span>
+            <span style="font-family:'Glacial Indifference',sans-serif; font-size:26px; letter-spacing:0.14em; text-transform:uppercase; color:#E0935A; font-weight:700;">Introducing FCN Last-Minute</span>
+          </div>
+
+          <h1 style="font-family:'DM Serif Display',serif; font-weight:400; color:#F5EFE0; font-size:96px; line-height:1.0; margin:0; letter-spacing:-0.015em; text-wrap:balance; pointer-events:auto;">The seats nobody else got to in time.</h1>
+
+          <div style="flex:1;"></div>
+
+          <p style="font-family:'Glacial Indifference',sans-serif; color:#F5EFE0; opacity:0.9; font-size:28px; line-height:1.45; margin:0 0 36px 0; max-width:800px; font-weight:500; pointer-events:auto;">Last-minute Business &amp; First Class at our lowest pricing ever. Non-refundable, up to 9 seats, no waiting around.</p>
+
+          <div style="border-top:1px solid rgba(245,239,224,0.28); max-width:820px; pointer-events:auto;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; padding:18px 0; border-bottom:1px solid rgba(245,239,224,0.16);">
+              <span style="font-family:'Glacial Indifference',sans-serif; font-size:25px; letter-spacing:0.1em; text-transform:uppercase; color:#F5EFE0; opacity:0.85; font-weight:600;">Europe</span>
+              <span style="font-family:'DM Serif Display',serif; font-size:38px; font-weight:400; color:#E0935A;">from ₹79K</span>
+            </div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between; padding:18px 0; border-bottom:1px solid rgba(245,239,224,0.16);">
+              <span style="font-family:'Glacial Indifference',sans-serif; font-size:25px; letter-spacing:0.1em; text-transform:uppercase; color:#F5EFE0; opacity:0.85; font-weight:600;">London</span>
+              <span style="font-family:'DM Serif Display',serif; font-size:38px; font-weight:400; color:#E0935A;">from ₹89K</span>
+            </div>
+            <div style="display:flex; align-items:baseline; justify-content:space-between; padding:18px 0;">
+              <span style="font-family:'Glacial Indifference',sans-serif; font-size:25px; letter-spacing:0.1em; text-transform:uppercase; color:#F5EFE0; opacity:0.85; font-weight:600;">USA</span>
+              <span style="font-family:'DM Serif Display',serif; font-size:38px; font-weight:400; color:#E0935A;">from ₹1.49L</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </div>
+
+      <!-- caption B -->
+      <div style="width:454px; background:#ffffff; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.08); padding:28px 30px; margin-top:20px;">
+        <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; opacity:0.5; font-weight:600; margin-bottom:10px;">WhatsApp caption</div>
+        <p style="font-family:'Glacial Indifference',sans-serif; font-size:13px; line-height:1.55; color:#0C1F35; margin:0; white-space:pre-line;">We started a group for the seats nobody else got to in time.
+
+FCN Last-Minute: last-minute Business &amp; First Class at our lowest pricing ever. Non-refundable, up to 9 seats, no waiting around.
+
+Europe ₹79K · London ₹89K · USA ₹1.49L · ex-Delhi.
+
+You know where to find us. Join → [link]</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C0563A; font-weight:700; margin:56px 0 16px 4px;">02 · SWISS · Delhi → Zurich</div>
+
+  <div style="display:flex; gap:56px; align-items:flex-start;">
+
+    <!-- ============ SWISS A — MOODY ============ -->
+    <div style="flex:none; width:454px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:0 0 14px 2px;">
+        <div style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; font-weight:600; white-space:nowrap;">A · Moody</div>
+        <div style="display:flex; gap:8px;">
+          <button onClick="{{ downloadSwissA }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid #0C1F35; background:#0C1F35; color:#fff; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↓ PNG</button>
+          <button onClick="{{ changeSwissA }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid rgba(12,31,53,0.28); background:#fff; color:#0C1F35; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↻ Change photo</button>
+          <button onClick="{{ removeSwissA }}" style="padding:7px 14px; border-radius:999px; border:1.5px solid rgba(192,107,78,0.4); background:#fff; color:#C0563A; font-family:'Glacial Indifference',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.04em; cursor:pointer;">Remove</button>
+        </div>
+      </div>
+
+      <div style="width:454px; height:567px; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+      <div id="poster-swiss-a" style="position:relative; width:1080px; height:1350px; transform:scale(0.42); transform-origin:top left; border-radius:2px; overflow:hidden;">
+        <image-slot id="fcn-swiss-a" shape="rect" fit="cover" placeholder="Drag a dark SWISS business-class cabin photo here" style="position:absolute; inset:0; width:100%; height:100%; display:block;"></image-slot>
+
+        <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(8,18,32,0.86) 0%, rgba(8,18,32,0.42) 32%, rgba(8,18,32,0.40) 56%, rgba(8,18,32,0.92) 100%);"></div>
+
+        <div style="position:absolute; inset:0; padding:84px; display:flex; flex-direction:column; pointer-events:none;">
+
+          <div style="display:flex; align-items:center; gap:14px; align-self:flex-end; color:#F5EFE0; pointer-events:auto;">
+            <img src="posts/fcn-mark-white.png" alt="FCN" style="height:48px; width:auto; display:block;">
+            <div style="font-family:'Glacial Indifference',sans-serif; font-size:15px; letter-spacing:0.34em; font-weight:600;">FIRST CLASS NINJAS</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; margin:46px 0 22px 0; pointer-events:auto;">
+            <span style="width:42px; height:2px; background:#E0935A; display:block;"></span>
+            <span style="font-family:'Glacial Indifference',sans-serif; font-size:26px; letter-spacing:0.14em; text-transform:uppercase; color:#E0935A; font-weight:700;">Next 30 days only</span>
+          </div>
+
+          <h1 style="font-family:'DM Serif Display',serif; font-weight:400; color:#FFFFFF; font-size:100px; line-height:0.98; margin:0; letter-spacing:-0.01em; text-wrap:balance; pointer-events:auto;">Zurich, the way the Swiss intended.</h1>
+
+          <div style="flex:1;"></div>
+
+          <p style="font-family:'Glacial Indifference',sans-serif; color:#F5EFE0; opacity:0.9; font-size:31px; line-height:1.42; margin:0 0 34px 0; max-width:840px; font-weight:500; pointer-events:auto;">Delhi to Zurich in Business Class on SWISS — booked late, priced like it.</p>
+
+          <image-slot id="swiss-logo-a" shape="rect" fit="contain" placeholder="Drop SWISS logo (white PNG)" style="width:260px; height:78px; display:block; margin:0 0 30px 0; pointer-events:auto;"></image-slot>
+
+          <div style="border-top:1px solid rgba(245,239,224,0.28); max-width:820px; pointer-events:auto;">
+            <div style="display:flex; align-items:baseline; padding:18px 0;">
+              <span style="font-family:'DM Serif Display',serif; font-size:54px; font-weight:400; color:#E0935A;">from ₹79K</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </div>
+
+      <div style="width:454px; background:#ffffff; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.08); padding:28px 30px; margin-top:20px;">
+        <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; opacity:0.5; font-weight:600; margin-bottom:10px;">WhatsApp caption</div>
+        <p style="font-family:'Glacial Indifference',sans-serif; font-size:13px; line-height:1.55; color:#0C1F35; margin:0; white-space:pre-line;">Zurich, the way the Swiss intended.
+
+Delhi to Zurich in Business Class on SWISS — flat bed, the good lounge, and a fare that only shows up when you book late.
+
+From ₹79K. Next 30 days only, ex-Delhi.
+
+Ask us what this route actually costs → [link]</p>
+      </div>
+    </div>
+
+    <!-- ============ SWISS B — BRIGHT ============ -->
+    <div style="flex:none; width:454px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:0 0 14px 2px;">
+        <div style="font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; font-weight:600; white-space:nowrap;">B · Bright</div>
+        <div style="display:flex; gap:8px;">
+          <button onClick="{{ downloadSwissB }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid #0C1F35; background:#0C1F35; color:#fff; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↓ PNG</button>
+          <button onClick="{{ changeSwissB }}" style="padding:6px 13px; border-radius:999px; border:1.5px solid rgba(12,31,53,0.28); background:#fff; color:#0C1F35; font-family:'Glacial Indifference',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.03em; cursor:pointer; white-space:nowrap;">↻ Change photo</button>
+          <button onClick="{{ removeSwissB }}" style="padding:7px 14px; border-radius:999px; border:1.5px solid rgba(192,107,78,0.4); background:#fff; color:#C0563A; font-family:'Glacial Indifference',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.04em; cursor:pointer;">Remove</button>
+        </div>
+      </div>
+
+      <div style="width:454px; height:567px; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+      <div id="poster-swiss-b" style="position:relative; width:1080px; height:1350px; transform:scale(0.42); transform-origin:top left; border-radius:2px; overflow:hidden;">
+        <image-slot id="fcn-swiss-b" shape="rect" fit="cover" placeholder="Drag a bright Zurich / Alps photo here" style="position:absolute; inset:0; width:100%; height:100%; display:block;"></image-slot>
+
+        <div style="position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(8,18,32,0.62) 0%, rgba(8,18,32,0.18) 30%, rgba(8,18,32,0.34) 60%, rgba(8,18,32,0.90) 100%);"></div>
+
+        <div style="position:absolute; inset:0; padding:84px; display:flex; flex-direction:column; pointer-events:none;">
+
+          <div style="display:flex; align-items:center; gap:14px; align-self:flex-end; color:#F5EFE0; pointer-events:auto;">
+            <img src="posts/fcn-mark-white.png" alt="FCN" style="height:48px; width:auto; display:block;">
+            <div style="font-family:'Glacial Indifference',sans-serif; font-size:15px; letter-spacing:0.34em; font-weight:600;">FIRST CLASS NINJAS</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; margin:46px 0 22px 0; pointer-events:auto;">
+            <span style="width:42px; height:2px; background:#E0935A; display:block;"></span>
+            <span style="font-family:'Glacial Indifference',sans-serif; font-size:26px; letter-spacing:0.14em; text-transform:uppercase; color:#E0935A; font-weight:700;">Next 30 days only</span>
+          </div>
+
+          <h1 style="font-family: 'DM Serif Display',serif; font-weight: 400; color: #ececec; font-size: 96px; line-height: 1.0; margin: 0; letter-spacing: -0.015em; text-wrap: balance; pointer-events: auto">The Alps called. Business class answered.</h1>
+
+          <div style="flex:1;"></div>
+
+          <p style="font-family:'Glacial Indifference',sans-serif; color:#F5EFE0; opacity:0.9; font-size:31px; line-height:1.42; margin:0 0 34px 0; max-width:840px; font-weight:500; pointer-events:auto;">Delhi to Zurich on SWISS, Business Class — at our last-minute price.</p>
+
+          <image-slot id="swiss-logo-b" shape="rect" fit="contain" placeholder="Drop SWISS logo (white PNG)" style="width:260px; height:78px; display:block; margin:0 0 30px 0; pointer-events:auto;"></image-slot>
+
+          <div style="border-top:1px solid rgba(245,239,224,0.28); max-width:820px; pointer-events:auto;">
+            <div style="display:flex; align-items:baseline; padding:18px 0;">
+              <span style="font-family:'DM Serif Display',serif; font-size:54px; font-weight:400; color:#E0935A;">from ₹79K</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </div>
+
+      <div style="width:454px; background:#ffffff; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,0.08); padding:28px 30px; margin-top:20px;">
+        <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#0C1F35; opacity:0.5; font-weight:600; margin-bottom:10px;">WhatsApp caption</div>
+        <p style="font-family:'Glacial Indifference',sans-serif; font-size:13px; line-height:1.55; color:#0C1F35; margin:0; white-space:pre-line;">The Alps called. Business class answered.
+
+Delhi → Zurich on SWISS in Business Class, at our last-minute price. From ₹79K, next 30 days only, ex-Delhi.
+
+Find out before you book elsewhere → [link]</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" fill="#0C1F35"></rect>
+    <polygon points="50,30 60,42 50,66 40,42" fill="none" stroke="#F5EFE0" stroke-width="2"></polygon>
+    <circle cx="50" cy="38" r="1.8" fill="#F5EFE0"></circle>
+    <text x="50" y="82" font-family="Georgia, serif" font-size="11" fill="#E0935A" text-anchor="middle" font-weight="bold" letter-spacing="1">FCN</text>
+  </svg>
+</template></x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const browse = (id) => {
+      const slot = document.getElementById(id);
+      const inp = slot && slot.shadowRoot && slot.shadowRoot.querySelector('input[type=file]');
+      if (inp) inp.click();
+    };
+    const clear = (id) => {
+      const slot = document.getElementById(id);
+      const btn = slot && slot.shadowRoot && slot.shadowRoot.querySelector('button[data-act=clear]');
+      if (btn) btn.click();
+    };
+    const download = (posterId, name) => {
+      if (!window.fcnExportPoster) { alert('Export engine still loading — try again in a moment.'); return; }
+      window.fcnExportPoster(posterId, name);
+    };
+    return {
+      changeA: () => browse('fcn-lastmin-a'),
+      changeB: () => browse('fcn-lastmin-b'),
+      removeA: () => clear('fcn-lastmin-a'),
+      removeB: () => clear('fcn-lastmin-b'),
+      downloadA: () => download('poster-lastmin-a', 'FCN-LastMinute-A'),
+      downloadB: () => download('poster-lastmin-b', 'FCN-LastMinute-B'),
+      changeSwissA: () => browse('fcn-swiss-a'),
+      changeSwissB: () => browse('fcn-swiss-b'),
+      removeSwissA: () => clear('fcn-swiss-a'),
+      removeSwissB: () => clear('fcn-swiss-b'),
+      downloadSwissA: () => download('poster-swiss-a', 'FCN-SWISS-Zurich-A'),
+      downloadSwissB: () => download('poster-swiss-b', 'FCN-SWISS-Zurich-B'),
+    };
+  }
+}
+</script>
+</body>
+</html>

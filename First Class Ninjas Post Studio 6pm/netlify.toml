@@ -1,0 +1,10 @@
+# Repo-root Netlify config for the FCN project.
+# The web app + serverless function live in the `site/` subfolder, so we set
+# the build base to `site`. publish/functions are then relative to that base.
+[build]
+  base = "site"
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
