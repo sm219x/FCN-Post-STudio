@@ -1,0 +1,12 @@
+# Continuous-deploy config for GitHub -> Netlify.
+# This repo nests the project under a wrapper folder ("First Class Ninjas Post
+# Studio Git/"), and the web app + serverless function live in its `site/`
+# subfolder. So the build base points into there; publish/functions are relative
+# to that base. This mirrors the working Netlify CLI deploy (base = the site/ dir).
+[build]
+  base = "First Class Ninjas Post Studio Git/site"
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
