@@ -102,7 +102,7 @@ PNG (canvas exporter `poster-export.js`) + Copy caption. 28 logos in `site/logos
   pure drag-drop. Keep the function's LOGOS array in sync with index.html.
 - **Image input:** ad upload/drag/paste is downscaled client-side (`downscaleImage`) before
   POSTing — Netlify functions have a hard 10s sync limit, so keep the vision model fast
-  (`claude-3-5-sonnet-20241022`) and images small. Errors now surface in a toast.
+  (`claude-haiku-4-5`) and images small. Errors now surface in a toast.
 
 ## Deployment facts (current setup)
 - Live site: `aquamarine-wisp-4fd36c.netlify.app` (Netlify site id `94c840f1-835b-4aab-b5bc-170b3367b155`).

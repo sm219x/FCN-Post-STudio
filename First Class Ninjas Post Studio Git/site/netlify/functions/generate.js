@@ -22,14 +22,14 @@ VOICE: a sharp friend who knows how to get business class at half price — conf
 You will receive KEY POINTS describing a deal (and sometimes an uploaded airline ad image to read the deal from). Extract the facts and write FCN-style copy.
 
 Return ONLY a JSON object, no markdown, with these keys:
-- "type": "flight" | "airline" | "hotel" | "lastmin" (airline = a single named airline is central; hotel = a hotel/brand; lastmin = a specific dated last-minute flight with route/timing/layover/seat details; flight = generic/multi-route deal)
+- "type": "flight" | "hotel" | "lastmin" (lastmin = a specific dated last-minute flight with route/timing/layover/seat details; hotel = a hotel/brand stay; flight = any other flight deal, INCLUDING a single named airline)
 - "airlineName": the airline's display name if named, else ""
 - "hotelName": the hotel/brand display name if named, else ""
 - "route": for lastmin, the airport-code routing exactly as given joined with " – " (e.g. "DEL – WAW – LHR"); otherwise the single destination city/region if clear, else "" (never include the origin city for non-lastmin)
-- "kicker": a SHORT tag. For lastmin use the travel DATE (e.g. "22 June"). Otherwise an urgency tag ONLY if implied ("Next 30 days only", "Limited seats", "Book by 30 June"); else ""
+- "kicker": a SHORT tag. For lastmin use the travel DATE or DATE RANGE exactly as given, normalised (e.g. "22 June", or "22–25 June" when a range like "22nd June – 25th June" is given — keep BOTH ends). Otherwise an urgency tag ONLY if implied ("Next 30 days only", "Limited seats", "Book by 30 June"); else ""
 - "prices": array of { "label": region/route or "", "value": "from ₹79K" } — ONLY if prices are given; else []. Format Indian style: 79k -> "₹79K", 1.49L or 1.49 lakh -> "₹1.49L". Always prefix "from ". For lastmin a single { "label":"", "value":"from ₹89K" } is typical.
 - "exCity": the ex-departure note for the caption if a departure city/origin is given (e.g. "ex-Delhi"); for lastmin infer from the first airport code (DEL->Delhi, BOM->Mumbai, BLR->Bangalore); else ""
-- "headline": 2-4 words per line, 1-3 lines, use \\n for line breaks. Sentence case. The witty hook — NOT a data dump. For lastmin, a short destination-led hook + seats (e.g. "London calling.\\n3 seats left."); keep route/timing/layover OUT of the headline. Tie festive/seasonal angles back to travel.
+- "headline": 2-4 words per line, 1-3 lines, use \\n for line breaks. Sentence case. The witty hook — NOT a data dump. For lastmin, a short destination-led hook + seats (e.g. "London calling.\\n3 seats left.") — ALWAYS include the seat count if given in ANY phrasing ("3 seats", "3 Seats available", "Seats - 3"); keep route/timing/layover OUT of the headline. Tie festive/seasonal angles back to travel.
 - "sub": For lastmin, a single pipe-joined detail line in this order: route | Timing <time> | Layover <place/duration> | <N stops> | Non-refundable (omit any not given), e.g. "DEL – WAW – LHR  |  Timing 8:00 AM - 5:10 PM  |  Layover Warsaw - 2h 40m  |  Non-refundable". For other types, ONE witty supporting sentence.
 
 Keep it tight. No filler. Capitalize "Business Class" and "First Class".`;
@@ -62,7 +62,7 @@ exports.handler = async (event) => {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-haiku-4-5',
         max_tokens: 700,
         system: SYSTEM,
         messages: [{ role: 'user', content }]
@@ -95,8 +95,10 @@ exports.handler = async (event) => {
     if (hit) logo = hit[0];
   }
 
+  // UI now has only flight / hotel / lastmin — collapse any "airline" into "flight".
+  let outType = ['flight','hotel','lastmin'].includes(obj.type) ? obj.type : (obj.type === 'airline' ? 'flight' : (body.type || 'flight'));
   const out = {
-    type: ['flight','airline','hotel','lastmin'].includes(obj.type) ? obj.type : (body.type || 'flight'),
+    type: outType,
     route: obj.route || '',
     airline: obj.airlineName || '',
     hotelName: obj.hotelName || '',

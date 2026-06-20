@@ -37,7 +37,7 @@
   /* ---------- form ---------- */
   .form{ padding:28px 32px 60px; }
   .grp{ margin-bottom:22px; }
-  .grp > label{ display:block; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; color:var(--navy); opacity:0.6; margin-bottom:8px; }
+  .grp > label, .lblrow > label{ display:block; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; color:var(--navy); opacity:0.6; margin-bottom:8px; }
   input[type=text], textarea, select{ width:100%; padding:11px 13px; border-radius:8px; border:1.5px solid rgba(12,31,53,0.16); background:#fff; font-size:15px; font-family:inherit; color:var(--navy); }
   textarea{ resize:vertical; min-height:64px; line-height:1.5; }
   .row{ display:flex; gap:8px; }
@@ -45,7 +45,7 @@
   .seg{ display:flex; gap:8px; flex-wrap:wrap; }
   .seg button{ flex:1; min-width:90px; padding:10px; border-radius:8px; border:1.5px solid rgba(12,31,53,0.18); background:#fff; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; color:var(--navy); }
   .seg button.on{ background:var(--navy); color:var(--cream); border-color:var(--navy); }
-  .swatches{ display:flex; gap:10px; }
+  .swatches{ display:flex; gap:10px; flex-wrap:wrap; max-width:430px; }
   .swatches button{ width:38px; height:38px; border-radius:50%; border:2px solid rgba(12,31,53,0.2); cursor:pointer; }
   .swatches button.on{ outline:2px solid var(--navy); outline-offset:2px; }
   .price-row{ display:flex; gap:8px; margin-bottom:8px; }
@@ -58,8 +58,50 @@
   .gen-btn{ width:100%; margin-top:10px; padding:13px; border-radius:8px; border:0; background:var(--blue); color:#fff; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:0.02em; }
   .gen-btn:disabled{ opacity:0.55; cursor:default; }
   .gen-btn.busy{ background:var(--navy); }
-  .suggest{ background:none; border:0; color:var(--terra); font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; float:right; letter-spacing:0.03em; }
+  .lblrow{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:8px; }
+  .lblrow > label{ margin-bottom:0; flex:1; white-space:nowrap; }
+  .suggest{ flex:none; white-space:nowrap; display:inline-flex; align-items:center; gap:4px; background:rgba(192,86,58,0.1); border:1px solid rgba(192,86,58,0.28); border-radius:999px; color:var(--terra); font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; letter-spacing:0.02em; padding:5px 11px; transition:background .15s, transform .08s, color .15s, border-color .15s; }
+  .suggest:hover{ background:rgba(192,86,58,0.18); }
+  .suggest:active{ transform:scale(0.93); }
+  .suggest.ok{ background:rgba(31,138,91,0.14); border-color:rgba(31,138,91,0.42); color:#1F8A5B; }
+  .btn-cap-sm{ padding:6px 14px!important; font-size:12px!important; border-radius:999px; }
+  @keyframes fcnFlash{ 0%{ box-shadow:0 0 0 3px rgba(224,147,90,0.55); } 55%{ box-shadow:0 0 0 3px rgba(224,147,90,0.4); } 100%{ box-shadow:0 0 0 3px rgba(224,147,90,0); } }
+  .flash{ animation:fcnFlash .8s ease; }
   .hint{ font-size:12px; opacity:0.5; margin-top:6px; }
+  .press{ margin-top:12px; border:1.5px solid rgba(30,72,116,0.18); border-radius:10px; overflow:hidden; }
+  .press-head{ display:flex; align-items:center; justify-content:space-between; padding:11px 14px; cursor:pointer; font-size:13px; font-weight:700; color:var(--blue); background:rgba(30,72,116,0.05); user-select:none; }
+  .press-caret{ transition:transform .2s; }
+  .press-head.open .press-caret{ transform:rotate(180deg); }
+  .press-body{ padding:14px; }
+  .press-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .press-grid a, #pressDyn a{ display:flex; align-items:center; gap:8px; padding:9px 11px; border:1px solid rgba(12,31,53,0.14); border-radius:8px; text-decoration:none; color:var(--navy); font-size:13px; font-weight:600; background:#fff; transition:border-color .15s, background .15s; }
+  .press-grid a:hover, #pressDyn a:hover{ border-color:var(--blue); background:rgba(30,72,116,0.04); }
+  #pressDyn a{ background:var(--blue); color:#fff; border-color:var(--blue); margin-bottom:10px; font-size:14px; justify-content:center; }
+  #pressDyn a:hover{ background:#163a5f; }
+  .warn{ font-size:12px; color:var(--terra); font-weight:600; margin-top:8px; }
+  .imgbtn{ width:100%; margin-top:10px; padding:11px; border-radius:8px; border:1.5px solid rgba(30,72,116,0.3); background:rgba(30,72,116,0.06); color:var(--blue); font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; transition:background .15s; }
+  .imgbtn:hover{ background:rgba(30,72,116,0.12); }
+  .imggrid{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:10px; }
+  .thumb{ position:relative; padding:0; border:2px solid transparent; border-radius:8px; overflow:hidden; cursor:pointer; aspect-ratio:4/5; background:#e7e5df; }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb:hover{ border-color:var(--blue); }
+  .thumb.sel{ border-color:var(--amber); }
+  .thumb.loading::after{ content:''; position:absolute; inset:0; background:rgba(255,255,255,0.55); }
+  .variations{ width:411px; background:#fff; border-radius:8px; padding:14px; }
+  .varhead{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; font-weight:700; opacity:0.55; margin-bottom:10px; }
+  .varrow{ display:flex; gap:12px; }
+  .varcell{ flex:1; }
+  .varstage{ width:100%; aspect-ratio:4/5; border-radius:4px; overflow:hidden; position:relative; cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,0.18); border:2px solid transparent; transition:border-color .15s; background:#0C1F35; }
+  .varstage:hover{ border-color:var(--blue); }
+  .varposter{ position:absolute; top:0; left:0; width:1080px; height:1350px; transform-origin:top left; }
+  .varlabel{ text-align:center; font-size:12px; font-weight:700; margin-top:7px; color:var(--navy); }
+  .recents{ width:411px; }
+  .rec-h{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; font-weight:700; opacity:0.5; margin-bottom:8px; }
+  .rec-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .rec-chip{ display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid rgba(12,31,53,0.16); border-radius:999px; padding:7px 12px; font-size:13px; font-weight:600; cursor:pointer; color:var(--navy); transition:border-color .15s; }
+  .rec-chip:hover{ border-color:var(--blue); }
+  .rec-x{ opacity:0.4; font-weight:700; cursor:pointer; }
+  .rec-x:hover{ opacity:0.9; color:var(--terra); }
   .upload{ display:block; padding:14px; border:1.5px dashed rgba(12,31,53,0.25); border-radius:8px; text-align:center; cursor:pointer; font-size:14px; font-weight:600; }
   .upload input{ display:none; }
   .airline-only,.hotel-note{ display:none; }
@@ -107,16 +149,15 @@
       <div class="grp">
         <label>Post type</label>
         <div class="seg" id="typeSeg">
-          <button data-v="flight" class="on">Flight deal</button>
-          <button data-v="airline">Airline-specific</button>
+          <button data-v="lastmin" class="on">Last-minute</button>
+          <button data-v="flight">Flight deal</button>
           <button data-v="hotel">Hotel deal</button>
-          <button data-v="lastmin">Last-minute</button>
         </div>
       </div>
 
       <div class="grp keypoints">
         <label>Key points <span class="hint" style="text-transform:none;letter-spacing:0;">— type the deal in plain words; I'll write the rest</span></label>
-        <textarea id="keypoints" placeholder="Flight: SWISS, Delhi to Zurich, Business 79k, next 30 days only, ex-Delhi&#10;&#10;Last-minute (one bullet per line):&#10;DEL - WAW - LHR&#10;Date - 22 June&#10;Timing - 8:00 AM - 5:10 PM&#10;Layover - Warsaw - 2h 40m&#10;Seats - 3&#10;Non-refundable&#10;LOT Polish Airlines&#10;Price - 89k per seat"></textarea>
+        <textarea id="keypoints" placeholder="Last-minute (one bullet per line):&#10;DEL - WAW - LHR&#10;Date - 22 June&#10;Timing - 8:00 AM - 5:10 PM&#10;Layover - Warsaw - 2h 40m&#10;Seats - 3&#10;Non-refundable&#10;LOT Polish Airlines&#10;Price - 89k per seat&#10;&#10;Flight deal: SWISS, Delhi to Zurich, Business 79k, next 30 days only, ex-Delhi"></textarea>
         <button class="gen-btn" id="genBtn">✨ Generate post</button>
         <label class="upload" id="adWrap" style="margin-top:10px;">📥 Upload, drag, or paste an airline ad to convert
           <input type="file" id="adFile" accept="image/png,image/jpeg,image/webp">
@@ -125,27 +166,23 @@
       </div>
 
       <div class="grp">
-        <label>Layout</label>
-        <div class="seg" id="layoutSeg">
-          <button data-v="A" class="on">A · Moody</button>
-          <button data-v="B">B · Bright</button>
-        </div>
-      </div>
-
-      <div class="grp">
-        <label>Headline colour</label>
-        <div class="swatches" id="colorSeg">
-          <button data-v="#F5EFE0" class="on" style="background:#F5EFE0" title="Cream"></button>
-          <button data-v="#E0935A" style="background:#E0935A" title="Amber"></button>
-          <button data-v="#FFFFFF" style="background:#FFFFFF" title="White"></button>
-          <button data-v="#1E4874" style="background:#1E4874" title="Brand blue (light photos only)"></button>
-        </div>
-        <div class="hint">Brand blue only reads on bright/light photos.</div>
-      </div>
-
-      <div class="grp">
         <label>Route / destination</label>
         <input type="text" id="route" placeholder="e.g. Zurich  ·  or  Delhi → Zurich">
+      </div>
+
+      <div class="grp">
+        <div class="lblrow"><label>Kicker tag <span class="hint" style="text-transform:none;letter-spacing:0;">(optional — urgency only)</span></label><button class="suggest" data-for="kicker" title="Auto-write this from your key points">✨ Suggest</button></div>
+        <input type="text" id="kicker" placeholder="Next 30 days only">
+      </div>
+
+      <div class="grp">
+        <div class="lblrow"><label>Headline</label><button class="suggest" data-for="headline" title="Auto-write this from your key points">✨ Suggest</button></div>
+        <textarea id="headline" placeholder="Sentence case. Use line breaks for stacked lines."></textarea>
+      </div>
+
+      <div class="grp">
+        <div class="lblrow"><label>Sub-copy</label><button class="suggest" data-for="sub" title="Auto-write this from your key points">✨ Suggest</button></div>
+        <textarea id="sub" placeholder="One line, single size."></textarea>
       </div>
 
       <div class="grp" id="logoGrp">
@@ -163,24 +200,6 @@
       </div>
 
       <div class="grp">
-        <button class="suggest" data-for="kicker">✨ Suggest</button>
-        <label>Kicker tag <span class="hint" style="text-transform:none;letter-spacing:0;">(optional — urgency only)</span></label>
-        <input type="text" id="kicker" placeholder="Next 30 days only">
-      </div>
-
-      <div class="grp">
-        <button class="suggest" data-for="headline">✨ Suggest</button>
-        <label>Headline</label>
-        <textarea id="headline" placeholder="Sentence case. Use line breaks for stacked lines."></textarea>
-      </div>
-
-      <div class="grp">
-        <button class="suggest" data-for="sub">✨ Suggest</button>
-        <label>Sub-copy</label>
-        <textarea id="sub" placeholder="One line, single size."></textarea>
-      </div>
-
-      <div class="grp">
         <label>Pricing <span class="hint" style="text-transform:none;letter-spacing:0;">(optional)</span></label>
         <div id="prices"></div>
         <button class="add" id="addPrice">+ Add price row</button>
@@ -192,10 +211,49 @@
       </div>
 
       <div class="grp">
+        <label>Headline colour</label>
+        <div class="swatches" id="colorSeg">
+          <button data-v="#F5EFE0" class="on" style="background:#F5EFE0" title="Cream"></button>
+          <button data-v="#FFFFFF" style="background:#FFFFFF" title="White"></button>
+          <button data-v="#E0935A" style="background:#E0935A" title="Amber"></button>
+          <button data-v="#C0563A" style="background:#C0563A" title="Terracotta"></button>
+          <button data-v="#1E4874" style="background:#1E4874" title="Brand blue"></button>
+          <button data-v="#0C1F35" style="background:#0C1F35" title="Navy"></button>
+          <button data-v="#C9CDD2" style="background:#C9CDD2" title="Light grey"></button>
+          <button data-v="#8A9099" style="background:#8A9099" title="Mid grey"></button>
+          <button data-v="#3A3F47" style="background:#3A3F47" title="Charcoal"></button>
+          <button data-v="#111418" style="background:#111418" title="Black"></button>
+        </div>
+        <div class="hint">Cream, white &amp; amber read on dark photos; greys, navy &amp; black need a bright/light photo.</div>
+        <div class="warn" id="contrastWarn" style="display:none;">⚠ Low contrast on this photo — try cream, white or amber for the headline.</div>
+      </div>
+
+      <div class="grp">
         <label>Background photo</label>
         <label class="upload">Click to upload a photo
           <input type="file" id="photo" accept="image/png,image/jpeg,image/webp">
         </label>
+        <div class="press">
+          <button type="button" class="imgbtn" id="suggestImgs">✨ Suggest images for this post</button>
+          <div class="press-body" id="pressBody" style="display:none;">
+            <div class="hint" id="imgStatus" style="margin:0 0 10px;"></div>
+            <div class="imggrid" id="imgGrid"></div>
+            <div id="pressDyn"></div>
+            <div class="hint" style="margin-top:8px;">Free photos via Wikimedia Commons (please credit the source). Click a thumbnail to set the background, or open the full gallery for more.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <label>Scrim shade</label>
+        <div class="seg" id="shadeSeg">
+          <button data-v="blue" class="on">Blue</button>
+          <button data-v="beige">Beige</button>
+          <button data-v="gray">Gray</button>
+          <button data-v="black">Black</button>
+          <button data-v="random">↻ Random</button>
+        </div>
+        <div class="hint">Tint &amp; depth of the gradient over your photo. Random reshuffles colour, intensity &amp; direction — click again to reshuffle.</div>
       </div>
     </div>
 
@@ -204,11 +262,12 @@
       <div class="stage"><div id="poster"></div></div>
       <div class="actions">
         <button class="btn-png" id="dlPng">↓ Download PNG</button>
-        <button class="btn-cap" id="cpCap">Copy caption</button>
+        <button class="btn-cap" id="varBtn">🎲 2 variations</button>
       </div>
+      <div class="variations" id="variations" style="display:none;"></div>
       <div class="toast" id="toast"></div>
       <div class="cap-box">
-        <label>WhatsApp caption</label>
+        <div class="lblrow"><label>WhatsApp caption</label><button class="btn-cap btn-cap-sm" id="cpCap">Copy caption</button></div>
         <textarea id="caption"></textarea>
       </div>
     </div>
@@ -234,8 +293,9 @@ const PASSWORD = "ninja";
 })();
 
 // ============ state ============
+const SHADES = { blue:[8,18,32], beige:[42,30,16], gray:[24,26,30], black:[6,6,9] };
 const state = {
-  type:'flight', layout:'A', color:'#F5EFE0',
+  type:'lastmin', shade:'blue', scrimRGB:[8,18,32], scrimIntensity:1, scrimAngle:180, color:'#F5EFE0',
   route:'', cabin:'Business Class', airline:'', hotelName:'', logo:'', logoUrl:null,
   kicker:'', headline:'', sub:'',
   prices:[],
@@ -256,6 +316,207 @@ const LOGOS = [
 function populateLogos(){
   const a=document.getElementById('og-airline'), h=document.getElementById('og-hotel');
   LOGOS.forEach(l=>{ const o=document.createElement('option'); o.value=l[0]; o.textContent=l[1]; (l[2]==='hotel'?h:a).appendChild(o); });
+}
+
+// Airline newsrooms / press sections — where airlines post articles with high-quality, press-usable
+// imagery. Surfaced for the selected airline so the team can open, grab a shot, and drag it on.
+const NEWSROOM = {
+  'air-canada':'https://media.aircanada.com/',
+  'air-france':'https://corporate.airfrance.com/en/news',
+  'air-india':'https://www.airindia.com/in/en/newsroom.html',
+  'ana':'https://www.ana.co.jp/group/en/newsroom/',
+  'british-airways':'https://mediacentre.britishairways.com/',
+  'cathay-pacific':'https://news.cathaypacific.com/',
+  'egyptair':'https://www.egyptair.com/en/about-egyptair/news-and-press/Pages/default.aspx',
+  'emirates':'https://www.emirates.com/media-centre/',
+  'etihad':'https://www.etihad.com/en/news',
+  'ita-airways':'https://www.ita-airways.com/en_en/ITA-Airways/press-area.html',
+  'japan-airlines':'https://press.jal.co.jp/en/',
+  'klm':'https://news.klm.com/',
+  'lufthansa':'https://www.lufthansagroup.com/en/newsroom.html',
+  'lot-polish-airlines':'https://www.lot.com/us/en/press-office',
+  'qatar-airways':'https://www.qatarairways.com/press-releases/en-WW/',
+  'singapore-airlines':'https://www.singaporeair.com/en_UK/us/media-centre/',
+  'swiss':'https://www.swiss.com/corporate/en/media',
+  'thai-airways':'https://www.thaiairways.com/en/about_thai/company_profile/news.page',
+  'turkish-airlines':'https://press.turkishairlines.com/en',
+  'united-airlines':'https://www.united.com/en/us/newsroom',
+  'virgin-atlantic':'https://mediacentre.virginatlantic.com/'
+};
+function nameForSlug(slug){ const l=LOGOS.find(x=>x[0]===slug); return l?l[1]:slug; }
+function renderPress(){ const dyn=document.getElementById('pressDyn'); if(dyn) dyn.innerHTML=''; }
+function flashField(el){ if(!el) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+
+// ----- luminance / legibility guard -----
+function lin(c){ return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function relLum(r,g,b){ return 0.2126*lin(r)+0.7152*lin(g)+0.0722*lin(b); }
+function hexToRgb(hex){ const m=(hex||'').replace('#','').match(/.{1,2}/g)||['0','0','0']; return [parseInt(m[0],16)||0,parseInt(m[1],16)||0,parseInt(m[2],16)||0]; }
+function sampleLum(img){
+  try{ const w=64,h=80,c=document.createElement('canvas'); c.width=w;c.height=h;
+    const cx=c.getContext('2d'); cx.drawImage(img,0,0,w,h);
+    const y0=Math.floor(h*0.20), bh=Math.floor(h*0.45);
+    const d=cx.getImageData(0,y0,w,bh).data; let s=0,n=0;
+    for(let i=0;i<d.length;i+=4){ s+=relLum(d[i]/255,d[i+1]/255,d[i+2]/255); n++; }
+    return n? s/n : null;
+  }catch(e){ return null; }
+}
+function lumFromSrc(src, cross){ return new Promise(r=>{ const im=new Image(); if(cross) im.crossOrigin='anonymous'; im.onload=()=>r(sampleLum(im)); im.onerror=()=>r(null); im.src=src; }); }
+function updateContrast(){
+  const warn=document.getElementById('contrastWarn'); if(!warn) return;
+  const a=Math.min(1,0.45*state.scrimIntensity);
+  const sl=relLum(state.scrimRGB[0]/255,state.scrimRGB[1]/255,state.scrimRGB[2]/255);
+  const pl=(state.photo && state.photoLum!=null)?state.photoLum:relLum(12/255,31/255,53/255);
+  const bgLum=pl*(1-a)+sl*a;
+  const hr=hexToRgb(state.color); const hl=relLum(hr[0]/255,hr[1]/255,hr[2]/255);
+  const ratio=(Math.max(hl,bgLum)+0.05)/(Math.min(hl,bgLum)+0.05);
+  warn.style.display = ratio<2.8 ? 'block':'none';
+}
+async function setPhotoFromUrl(url){ const lum=await lumFromSrc(url,true); state.photo=url; state.photoLum=lum; render(); return lum!=null; }
+
+// ----- city photo suggestions (Wikimedia Commons — free to use) -----
+function getPlaces(){
+  const out=[]; const push=v=>{ v=(v||'').trim(); if(v && !out.some(p=>p.toLowerCase()===v.toLowerCase())) out.push(v); };
+  const route=(state.route||'').trim();
+  const parts=route.split(/[\u2192>\-\u2013]|\bto\b/i).map(s=>s.trim()).filter(Boolean);
+  const ordered = parts.length ? [parts[parts.length-1], parts[0]] : [];
+  ordered.forEach(tok=>{ if(/^[A-Za-z]{3}$/.test(tok)){ const c=cityFromCode(tok); if(c) push(c); } else push(tok); });
+  const cities=[...new Set(Object.values(AIRPORTS))];
+  const hay=(state.headline+' '+state.sub);
+  cities.forEach(c=>{ if(new RegExp('\\b'+c.replace(/[^a-z ]/gi,'')+'\\b','i').test(hay)) push(c); });
+  return out.slice(0,3);
+}
+// Reject Commons junk results (paintings, maps, satellite/space, logos, flags).
+const IMG_JUNK=/painting|\bmap\b|satellite|aerial|space ?station|\biss\b|diagram|coat of arms|\bseal\b|\bflag\b|\blogo\b|locator|night ?lights|from space|topograph|engraving|lithograph|woodcut/i;
+async function commonsSearch(search, n, tok){
+  const url='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrsearch='+encodeURIComponent(search)+'&gsrlimit='+n+'&prop=imageinfo&iiprop=url|mime&iiurlwidth=460';
+  const j=await (await fetch(url)).json();
+  const pages=(j.query&&j.query.pages)?Object.values(j.query.pages):[];
+  return pages.map(p=>{ const ii=p.imageinfo&&p.imageinfo[0]; if(!ii||!ii.thumburl) return null;
+    const name=p.title.replace(/^File:/,'');
+    if(!/\.(jpe?g|png)$/i.test(ii.url||'')) return null;
+    if(IMG_JUNK.test(name)) return null;
+    return {thumb:ii.thumburl, full:ii.url, title:p.title, rel:(tok && name.toLowerCase().indexOf(tok)>=0?0:1)}; })
+    .filter(Boolean).sort((a,b)=>a.rel-b.rel);
+}
+// A few airline display names are too generic for image search — search the full legal name.
+const AIRLINE_SEARCH={'SWISS':'Swiss International Air Lines','ANA':'All Nippon Airways'};
+async function commonsThumbs(place, n){
+  return commonsSearch(place+' skyline', n, place.toLowerCase().slice(0,4));
+}
+async function commonsCabin(airline, n){
+  const q=AIRLINE_SEARCH[airline]||airline;
+  const tok=q.toLowerCase().split(' ')[0].slice(0,5);
+  const r=await commonsSearch(q+' business class', n+6, tok);
+  return r.filter(it=>/cabin|class|seat|interior|suite/i.test(it.title)).slice(0,n);
+}
+async function commonsScaled(title, width){
+  const url='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth='+width+'&titles='+encodeURIComponent(title);
+  const j=await (await fetch(url)).json();
+  const p=(j.query&&j.query.pages)?Object.values(j.query.pages)[0]:null;
+  const ii=p&&p.imageinfo&&p.imageinfo[0]; return ii?(ii.thumburl||ii.url):null;
+}
+async function suggestImages(){
+  const body=document.getElementById('pressBody'); body.style.display='block';
+  const grid=document.getElementById('imgGrid'), status=document.getElementById('imgStatus'), dyn=document.getElementById('pressDyn');
+  dyn.innerHTML='';
+  const places=getPlaces();
+  const airline=(state.airline||'').trim();
+  if(!places.length && !airline){ status.textContent='Add a route, destination or airline first — then I’ll find free photos.'; grid.innerHTML=''; return; }
+  const what=[airline?airline+' cabins':'', places.join(', ')].filter(Boolean).join(' + ');
+  status.textContent='Finding free photos of '+what+'…'; grid.innerHTML='';
+  try{
+    let cabin=[], city=[];
+    if(airline) cabin=await commonsCabin(airline, 6);
+    for(const pl of places){ city=city.concat(await commonsThumbs(pl, 8)); }
+    const seen={}; const items=[...cabin, ...city].filter(it=>{ if(seen[it.full]) return false; seen[it.full]=1; return true; }).slice(0,20);
+    if(!items.length){ status.textContent='No good photos found — try a different destination, or upload your own.'; return; }
+    status.textContent='Click a photo to use it as the background:';
+    grid._items=items;
+    grid.innerHTML=items.map((it,i)=>'<button type="button" class="thumb" data-i="'+i+'"><img src="'+it.thumb+'" loading="lazy" alt=""></button>').join('');
+    [...grid.querySelectorAll('.thumb')].forEach(b=> b.addEventListener('click', async ()=>{
+      if(b.classList.contains('loading')) return;
+      const it=grid._items[+b.dataset.i]; b.classList.add('loading');
+      let src=null; try{ src=await commonsScaled(it.title,1600); }catch(e){}
+      await setPhotoFromUrl(src||it.full);
+      b.classList.remove('loading');
+      [...grid.querySelectorAll('.thumb')].forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+      toast('Background set — photo from Wikimedia Commons');
+    }));
+    const gal=[];
+    if(state.logo && NEWSROOM[state.logo]) gal.push('<a href="'+NEWSROOM[state.logo]+'" target="_blank" rel="noopener">Open '+esc(nameForSlug(state.logo))+'’s newsroom ↗</a>');
+    if(airline) gal.push('<a href="https://commons.wikimedia.org/w/index.php?search='+encodeURIComponent(airline+' business class cabin')+'&fulltext=1&ns6=1" target="_blank" rel="noopener">More '+esc(airline)+' cabin photos ↗</a>');
+    places.forEach(pl=> gal.push('<a href="https://commons.wikimedia.org/w/index.php?search='+encodeURIComponent(pl+' skyline')+'&fulltext=1&ns6=1" target="_blank" rel="noopener">More '+esc(pl)+' photos ↗</a>'));
+    dyn.innerHTML=gal.join('');
+  }catch(e){ status.textContent='Couldn’t load photos (network issue). Check your connection and try again.'; }
+}
+
+// ----- variations (same words, two looks) -----
+const LOOKS=[
+  {color:'#F5EFE0',shade:'blue',angle:180,intensity:1},
+  {color:'#E0935A',shade:'black',angle:165,intensity:1.05},
+  {color:'#FFFFFF',shade:'gray',angle:195,intensity:1},
+  {color:'#F5EFE0',shade:'beige',angle:175,intensity:1.05},
+  {color:'#E0935A',shade:'blue',angle:185,intensity:0.95},
+  {color:'#FFFFFF',shade:'black',angle:180,intensity:1.1}
+];
+function applyLook(p){
+  Object.assign(state,{color:p.color,shade:p.shade,scrimRGB:SHADES[p.shade],scrimIntensity:p.intensity,scrimAngle:p.angle});
+  document.querySelectorAll('#colorSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===p.color));
+  document.querySelectorAll('#shadeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===p.shade));
+}
+function showVariations(){
+  const wrap=document.getElementById('variations'); if(!wrap) return;
+  const pool=LOOKS.slice(); const picks=[];
+  while(picks.length<2 && pool.length){ picks.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
+  wrap.innerHTML='<div class="varhead">Pick a look — same words, two treatments</div><div class="varrow">'+
+    picks.map((p,i)=>'<div class="varcell"><div class="varstage" data-i="'+i+'"><div class="varposter"></div></div><div class="varlabel">'+(i?'Option B':'Option A')+'</div></div>').join('')+'</div>';
+  wrap.style.display='block';
+  const stages=wrap.querySelectorAll('.varstage');
+  picks.forEach((p,i)=>{
+    const st=Object.assign({},state,{color:p.color,shade:p.shade,scrimRGB:SHADES[p.shade],scrimIntensity:p.intensity,scrimAngle:p.angle});
+    const poster=stages[i].querySelector('.varposter');
+    poster.innerHTML=posterHTML(st);
+    const sw=stages[i].clientWidth; poster.style.transform='scale('+(sw/1080)+')';
+    stages[i].addEventListener('click',()=>{ applyLook(p); render(); wrap.style.display='none'; wrap.innerHTML=''; toast('Look applied — tweak anything you like'); });
+  });
+}
+
+// ----- save & reuse -----
+const RECENT_KEY='fcn_recent_v1';
+function loadRecents(){ try{ return JSON.parse(localStorage.getItem(RECENT_KEY))||[]; }catch(e){ return []; } }
+function saveRecents(arr){ try{ localStorage.setItem(RECENT_KEY, JSON.stringify(arr)); }catch(e){} }
+function snapshotState(){
+  const keep=['type','shade','scrimRGB','scrimIntensity','scrimAngle','color','route','airline','hotelName','logo','logoUrl','kicker','headline','sub','prices','exCity','photo','photoLum'];
+  const o={}; keep.forEach(k=>o[k]=state[k]); return o;
+}
+function postLabel(s){ return (s.route||'').trim() || (s.headline||'').split('\n')[0].trim() || (s.kicker||'') || (s.type+' post'); }
+function savePost(){
+  const arr=loadRecents(); arr.unshift(Object.assign({_t:Date.now()}, snapshotState()));
+  let trimmed=arr.slice(0,6);
+  saveRecents(trimmed);
+  if(loadRecents().length!==trimmed.length){ trimmed=trimmed.map(x=>Object.assign({},x,{photo:null})); saveRecents(trimmed); }
+  renderRecents(); toast('Post saved to Recent');
+}
+function loadPost(s){
+  if(!s) return;
+  Object.assign(state, s);
+  document.querySelectorAll('#typeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===state.type));
+  document.querySelectorAll('#shadeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===state.shade));
+  document.querySelectorAll('#colorSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===state.color));
+  ['route','kicker','headline','sub','exCity'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=state[id]||''; });
+  const sel=document.getElementById('logo'); if(sel) sel.value=state.logo||'';
+  applyType(); renderPriceInputs(); renderPress(); render();
+  toast('Loaded');
+}
+function renderRecents(){
+  const wrap=document.getElementById('recents'); if(!wrap) return;
+  const arr=loadRecents();
+  if(!arr.length){ wrap.innerHTML=''; return; }
+  wrap.innerHTML='<div class="rec-h">Recent posts</div><div class="rec-row">'+arr.map((s,i)=>
+    '<div class="rec-chip" data-i="'+i+'"><span class="rec-t">'+esc(postLabel(s).slice(0,22))+'</span><span class="rec-x" data-x="'+i+'">×</span></div>'
+  ).join('')+'</div>';
+  wrap.querySelectorAll('.rec-chip').forEach(c=> c.addEventListener('click',e=>{ if(e.target.classList.contains('rec-x')) return; loadPost(loadRecents()[+c.dataset.i]); }));
+  wrap.querySelectorAll('.rec-x').forEach(x=> x.addEventListener('click',e=>{ e.stopPropagation(); const a=loadRecents(); a.splice(+x.dataset.x,1); saveRecents(a); renderRecents(); }));
 }
 
 const CTAS = [
@@ -338,9 +599,27 @@ function parseExCity(text, f, route){
 }
 function parseDate(text){
   let m;
+  // Range: "22nd June – 25th June", "22 – 25 June", "22-25 June"
+  if((m=text.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s*([A-Za-z]{3,9})?\s*(?:[\u2013\u2014-]|to)\s*(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\b/i)) && monthIdx(m[4])>=0){
+    const mo2=cap(MONTHS[monthIdx(m[4])]);
+    const mo1=(m[2]&&monthIdx(m[2])>=0)?cap(MONTHS[monthIdx(m[2])]):mo2;
+    return mo1===mo2 ? (m[1]+'\u2013'+m[3]+' '+mo2) : (m[1]+' '+mo1+' \u2013 '+m[3]+' '+mo2);
+  }
+  // Range: "June 22–25", "June 22-25"
+  if((m=text.match(/\b([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\s*[\u2013\u2014-]\s*(\d{1,2})(?:st|nd|rd|th)?\b/)) && monthIdx(m[1])>=0)
+    return m[2]+'\u2013'+m[3]+' '+cap(MONTHS[monthIdx(m[1])]);
+  // Single dates
   if((m=text.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\b/)) && monthIdx(m[2])>=0) return m[1]+' '+cap(MONTHS[monthIdx(m[2])]);
   if((m=text.match(/\b([A-Za-z]{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?\b/)) && monthIdx(m[1])>=0) return cap(MONTHS[monthIdx(m[1])])+' '+m[2];
   return '';
+}
+// Pull a seat count from labeled fields or free text ("3 seats", "3 Seats available", "Seats - 3").
+function parseSeats(text, f){
+  let v=getField(f||{},['seats available','no. of seats','number of seats','no of seats','seats left','seats']);
+  let m=(v||'').match(/\d+/);
+  if(m) return m[0];
+  m=(text||'').match(/(\d+)\s*seats?\b/i);
+  return m ? m[1] : '';
 }
 function parseKicker(text){
   const t=text.toLowerCase();
@@ -390,7 +669,7 @@ function localGenerate(kp){
   const kicker=parseKicker(kp);
   const logo=detectLogo(kp);
   let type=state.type;
-  if(state.type!=='lastmin'){ if(logo){ type = logo[2]==='hotel' ? 'hotel' : 'airline'; } }
+  if(state.type!=='lastmin' && logo){ type = logo[2]==='hotel' ? 'hotel' : 'flight'; }
   const airline = (logo&&logo[2]==='airline')?logo[1]:'';
   const hotelName = (logo&&logo[2]==='hotel')?logo[1]:'';
 
@@ -402,8 +681,7 @@ function localGenerate(kp){
     const timing=getField(f,['timing','departure time','dep time','time']);
     const layover=getField(f,['layover','stopover','via']);
     const stopsRaw=getField(f,['no. of stops','number of stops','no of stops','stops']);
-    const seatsRaw=getField(f,['no. of seats','number of seats','no of seats','seats available','seats']);
-    const seatNum=(seatsRaw.match(/\d+/)||[])[0];
+    const seatNum=parseSeats(kp,f);
     const routeStr = route ? route.display : (getField(f,['route','sector','sectors'])||'');
     const dest = route && route.codes.length ? cityFromCode(route.codes[route.codes.length-1]) : '';
 
@@ -422,7 +700,7 @@ function localGenerate(kp){
     else if(routeStr) headline = 'Last-minute fare.\n'+(seatTxt||'Move fast.');
     else headline = 'Pack tonight.\nThank us later.';
 
-    return { type, layout:state.layout, route:routeStr||dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
+    return { type, route:routeStr||dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
   }
 
   // ---------- flight / airline / hotel ----------
@@ -432,17 +710,14 @@ function localGenerate(kp){
   if(type==='hotel'){
     headline = hotelName ? (hotelName+',\nfor rather less.') : 'Five-star stays.\nFour-figure regret avoided.';
     sub = (hotelName?hotelName:'Suites the brochure charges double for')+' \u2014 at a rate you won\u2019t find on the booking sites.';
-  } else if(type==='airline'){
-    headline = dest ? (dest+',\nup front.') : ((airline||'Business')+',\nat half the going rate.');
-    sub = cabin+' on '+(airline||'a top airline')+(dest?(' to '+dest):'')+' \u2014 booked smart, priced like it.';
   } else if(multi){
     headline = 'Lowest fares\nwe\u2019ve ever run.';
     sub = cabin+' to '+regions.slice(0,-1).join(', ')+' and '+regions.slice(-1)+' \u2014 the cheapest seats we\u2019ve put out.';
   } else {
     headline = dest ? (dest+',\nthe way it should be flown.') : 'The seats the rest\nof the cabin overpaid for.';
-    sub = cabin+(dest?(' to '+dest):'')+' \u2014 at a price the rest of the cabin won\u2019t believe.';
+    sub = cabin+(dest?(' to '+dest):'')+(airline?(' on '+airline):'')+' \u2014 at a price the rest of the cabin won\u2019t believe.';
   }
-  return { type, layout:state.layout, route:dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
+  return { type, route:dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
 }
 
 // Calls the Netlify function once it exists + a key is set; throws otherwise so we fall back.
@@ -486,6 +761,7 @@ function downscaleImage(dataUrl, maxDim, quality){
 
 function applyGenerated(g){
   if(!g) return;
+  if(g.type==='airline') g.type='flight'; // airline merged into flight
   // type + dependent logo
   if(g.type && g.type!==state.type){
     state.type=g.type;
@@ -505,6 +781,8 @@ function applyGenerated(g){
   state.exCity=g.exCity||''; document.getElementById('exCity').value=state.exCity;
   state.prices=Array.isArray(g.prices)?g.prices:[];
   renderPriceInputs();
+  ['headline','sub','kicker','route'].forEach(id=>{ const el=document.getElementById(id); if(el && el.value.trim()) flashField(el); });
+  renderPress();
   render();
 }
 
@@ -571,28 +849,38 @@ function buildCaption(){
 // ============ poster renderer ============
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+function buildScrim(rgb, intensity, angle){
+  const r=rgb[0], g=rgb[1], b=rgb[2];
+  const a=x=>Math.min(1, x*intensity).toFixed(3);
+  return 'linear-gradient('+angle+'deg, rgba('+r+','+g+','+b+','+a(0.86)+') 0%, rgba('+r+','+g+','+b+','+a(0.40)+') 32%, rgba('+r+','+g+','+b+','+a(0.42)+') 58%, rgba('+r+','+g+','+b+','+a(0.92)+') 100%)';
+}
+
 function render(){
-  const dark = state.layout==='A';
-  const scrim = dark
-    ? 'linear-gradient(180deg, rgba(8,18,32,0.86) 0%, rgba(8,18,32,0.42) 32%, rgba(8,18,32,0.40) 56%, rgba(8,18,32,0.92) 100%)'
-    : 'linear-gradient(180deg, rgba(8,18,32,0.62) 0%, rgba(8,18,32,0.18) 30%, rgba(8,18,32,0.34) 60%, rgba(8,18,32,0.90) 100%)';
-  const bg = state.photo
-    ? '<img src="'+state.photo+'" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
+  document.getElementById('poster').innerHTML = posterHTML(state);
+  document.getElementById('caption').value = buildCaption();
+  updateContrast();
+}
+
+function posterHTML(st){
+  const scrim = buildScrim(st.scrimRGB, st.scrimIntensity, st.scrimAngle);
+  const cors = (st.photo && /^https?:/i.test(st.photo)) ? ' crossorigin="anonymous"' : '';
+  const bg = st.photo
+    ? '<img src="'+st.photo+'"'+cors+' alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
     : '';
-  const hl = esc(state.headline).replace(/\n/g,'<br>');
-  const kicker = state.kicker ? (
+  const hl = esc(st.headline).replace(/\n/g,'<br>');
+  const kicker = st.kicker ? (
     '<div style="display:flex;align-items:center;gap:14px;margin:46px 0 22px 0;">'+
       '<span style="width:42px;height:2px;background:#E0935A;display:block;"></span>'+
-      '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:26px;letter-spacing:0.14em;text-transform:uppercase;color:#E0935A;font-weight:700;">'+esc(state.kicker)+'</span>'+
+      '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:26px;letter-spacing:0.14em;text-transform:uppercase;color:#E0935A;font-weight:700;">'+esc(st.kicker)+'</span>'+
     '</div>') : '<div style="height:46px;"></div>';
-  const logoBlock = state.logoUrl
-    ? '<div style="align-self:flex-start;background:#F5EFE0;border-radius:4px;padding:13px 18px;margin:0 0 28px 0;"><img src="'+state.logoUrl+'" alt="" style="height:52px;width:auto;display:block;"></div>'
+  const logoBlock = st.logoUrl
+    ? '<div style="align-self:flex-start;background:#F5EFE0;border-radius:4px;padding:13px 18px;margin:0 0 28px 0;"><img src="'+st.logoUrl+'" alt="" style="height:52px;width:auto;display:block;"></div>'
     : '';
-  let priceRows = state.prices.filter(p=>p.value).map(function(p,i,arr){
+  let priceRows = (st.prices||[]).filter(p=>p.value).map(function(p,i,arr){
     const border = i<arr.length-1 ? 'border-bottom:1px solid rgba(245,239,224,0.16);' : '';
-    const single = arr.length===1;
-    if (single){
-      return '<div style="display:flex;align-items:baseline;padding:18px 0;">'+
+    if (arr.length===1){
+      return '<div style="display:flex;align-items:baseline;gap:26px;padding:18px 0;">'+
+        (p.label?'<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:25px;letter-spacing:0.1em;text-transform:uppercase;color:#F5EFE0;opacity:0.82;font-weight:600;align-self:center;">'+esc(p.label)+'</span>':'')+
         '<span style="font-family:\'DM Serif Display\',serif;font-size:54px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
     }
     return '<div style="display:flex;align-items:baseline;justify-content:space-between;padding:18px 0;'+border+'">'+
@@ -600,9 +888,7 @@ function render(){
       '<span style="font-family:\'DM Serif Display\',serif;font-size:38px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
   }).join('');
   const pricing = priceRows ? '<div style="border-top:1px solid rgba(245,239,224,0.28);max-width:840px;">'+priceRows+'</div>' : '';
-
-  document.getElementById('poster').innerHTML =
-    bg +
+  return bg +
     '<div style="position:absolute;inset:0;background:'+scrim+';"></div>'+
     '<div style="position:absolute;inset:0;padding:84px;display:flex;flex-direction:column;">'+
       '<div style="display:flex;align-items:center;gap:14px;align-self:flex-end;color:#F5EFE0;">'+
@@ -610,13 +896,12 @@ function render(){
         '<div style="font-family:\'Glacial Indifference\',sans-serif;font-size:15px;letter-spacing:0.34em;font-weight:600;">FIRST CLASS NINJAS</div>'+
       '</div>'+
       kicker +
-      '<h1 style="font-family:\'DM Serif Display\',serif;font-weight:400;color:'+state.color+';font-size:100px;line-height:0.99;margin:0;letter-spacing:-0.01em;">'+hl+'</h1>'+
+      '<h1 style="font-family:\'DM Serif Display\',serif;font-weight:400;color:'+st.color+';font-size:100px;line-height:0.99;margin:0;letter-spacing:-0.01em;">'+hl+'</h1>'+
+      (st.sub?'<p style="font-family:\'Glacial Indifference\',sans-serif;color:#F5EFE0;opacity:0.9;font-size:37px;line-height:1.4;margin:34px 0 0 0;max-width:840px;font-weight:500;">'+esc(st.sub)+'</p>':'')+
       '<div style="flex:1;"></div>'+
-      (state.sub?'<p style="font-family:\'Glacial Indifference\',sans-serif;color:#F5EFE0;opacity:0.9;font-size:31px;line-height:1.42;margin:0 0 30px 0;max-width:840px;font-weight:500;">'+esc(state.sub)+'</p>':'')+
       logoBlock +
       pricing +
     '</div>';
-  document.getElementById('caption').value = buildCaption();
 }
 
 // ============ wiring ============
@@ -644,6 +929,7 @@ function applyType(){
   if(lbl) lbl.textContent = hotels ? 'Hotel logo (optional)' : 'Airline logo (optional)';
   const item = LOGOS.find(l=>l[0]===state.logo);
   if(item){ const want = hotels?'hotel':'airline'; if(item[2]!==want){ sel.value=''; state.logo=''; state.logoUrl=null; state.airline=''; state.hotelName=''; } }
+  if(typeof renderPress==='function') renderPress();
 }
 
 function renderPriceInputs(){
@@ -681,11 +967,37 @@ function imageFromEvent(e){
   if(dt.items && dt.items.length){ for(const it of dt.items){ if(it.kind==='file' && /^image\//.test(it.type)) return it.getAsFile(); } }
   return null;
 }
-async function setPhoto(dataUrl){ state.photo = await downscaleImage(dataUrl, 1800, 0.9); render(); }
+// Pull an image URL from a drop (e.g. an image dragged straight from a web page).
+function imageUrlFromEvent(e){
+  const dt = e.dataTransfer; if(!dt) return null;
+  let u = (dt.getData('text/uri-list') || dt.getData('text/plain') || '').trim().split(/\s+/)[0];
+  if(/^https?:\/\/\S+\.(jpe?g|png|webp|gif)(\?|$)/i.test(u)) return u;
+  const html = dt.getData('text/html') || '';
+  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if(m && /^https?:/i.test(m[1])) return m[1];
+  if(/^https?:\/\//i.test(u)) return u; // last resort: any http url
+  return null;
+}
+async function setPhoto(dataUrl){ const d=await downscaleImage(dataUrl, 1800, 0.9); state.photo=d; state.photoLum=await lumFromSrc(d,false); render(); }
 
 function init(){
   if(window.__inited) return; window.__inited=true;
-  seg('typeSeg','type'); seg('layoutSeg','layout'); seg('colorSeg','color');
+  seg('typeSeg','type'); seg('colorSeg','color');
+  document.getElementById('shadeSeg').addEventListener('click', e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const v=b.dataset.v; state.shade=v;
+    if(v==='random'){
+      const keys=['blue','beige','gray','black'];
+      state.scrimRGB=SHADES[keys[Math.floor(Math.random()*keys.length)]];
+      state.scrimIntensity=0.75+Math.random()*0.45;
+      state.scrimAngle=[180,165,195,160,200][Math.floor(Math.random()*5)];
+    } else {
+      state.scrimRGB=SHADES[v]||SHADES.blue; state.scrimIntensity=1; state.scrimAngle=180;
+    }
+    render();
+  });
   bindText('route','route'); bindText('kicker','kicker');
   bindText('headline','headline'); bindText('sub','sub'); bindText('exCity','exCity');
   renderPriceInputs();
@@ -693,13 +1005,21 @@ function init(){
 
   document.querySelectorAll('.suggest').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      const f = btn.dataset.for; const v = gen(f);
-      state[f]=v; document.getElementById(f).value=v; render();
+      const f = btn.dataset.for; const v = gen(f); const el=document.getElementById(f);
+      if(!v || !v.trim()){ toast('Add a few key points or a route first', 2200); return; }
+      state[f]=v; el.value=v; render(); flashField(el);
+      const orig=btn.innerHTML; btn.classList.add('ok'); btn.innerHTML='✓ Added';
+      clearTimeout(btn._t); btn._t=setTimeout(()=>{ btn.classList.remove('ok'); btn.innerHTML=orig; }, 1400);
+      toast(({headline:'Headline',sub:'Sub-copy',kicker:'Kicker'}[f]||'Copy')+' suggested');
     });
   });
 
   document.getElementById('photo').addEventListener('change',e=> fileToUrl(e.target, url=>{ setPhoto(url); }));
   populateLogos();
+  renderPress();
+  renderRecents();
+  document.getElementById('suggestImgs').addEventListener('click', suggestImages);
+  document.getElementById('varBtn').addEventListener('click', showVariations);
   const logoSel=document.getElementById('logo'), uploadWrap=document.getElementById('logoUploadWrap');
   logoSel.addEventListener('change',()=>{
     const v=logoSel.value;
@@ -710,6 +1030,7 @@ function init(){
     state.logoUrl = v ? 'logos/'+v+'.png' : null;
     state.airline = (item&&item[2]==='airline')?item[1]:'';
     state.hotelName = (item&&item[2]==='hotel')?item[1]:'';
+    renderPress();
     render();
   });
   document.getElementById('logoFile').addEventListener('change',e=> fileToUrl(e.target, url=>{ state.logoUrl=url; render(); }));
@@ -722,16 +1043,20 @@ function init(){
   const kpCard = document.querySelector('.keypoints');
   const stage = document.querySelector('.stage');
   const stop = e=>{ e.preventDefault(); e.stopPropagation(); };
-  function wireDrop(el, handler){
+  function wireDrop(el, handler, urlHandler){
     if(!el) return;
     ['dragenter','dragover'].forEach(ev=> el.addEventListener(ev, e=>{ stop(e); el.style.outline='2px dashed var(--blue)'; el.style.outlineOffset='3px'; }));
     ['dragleave','dragend'].forEach(ev=> el.addEventListener(ev, e=>{ stop(e); el.style.outline=''; }));
-    el.addEventListener('drop', e=>{ stop(e); el.style.outline=''; const f=imageFromEvent(e); if(f) readImageFile(f, handler); });
+    el.addEventListener('drop', e=>{ stop(e); el.style.outline='';
+      const f=imageFromEvent(e);
+      if(f){ readImageFile(f, handler); return; }
+      if(urlHandler){ const u=imageUrlFromEvent(e); if(u) urlHandler(u); }
+    });
   }
   // Drop an ad onto the key-points card -> read & generate.
   wireDrop(kpCard, url=> generatePost(url));
-  // Drop a photo onto the poster preview -> set background.
-  wireDrop(stage, url=> setPhoto(url));
+  // Drop a photo onto the poster preview -> set background (file from disk, or image dragged from a web page).
+  wireDrop(stage, url=> setPhoto(url), u=> setPhotoFromUrl(u));
   // Paste an image anywhere (outside text fields) -> treat as an ad to read.
   window.addEventListener('paste', e=>{
     const t=e.target, tag=(t&&t.tagName||'').toLowerCase();
@@ -743,7 +1068,7 @@ function init(){
 
   document.getElementById('dlPng').addEventListener('click',()=>{
     if(!window.fcnExportPoster){ alert('Export engine still loading.'); return; }
-    const name = 'FCN-' + (state.route.replace(/[^a-z0-9]+/gi,'-')||'post') + '-' + state.layout;
+    const name = 'FCN-' + (state.route.replace(/[^a-z0-9]+/gi,'-')||'post') + '-' + state.shade;
     window.fcnExportPoster('poster', name);
   });
   document.getElementById('cpCap').addEventListener('click',()=>{
