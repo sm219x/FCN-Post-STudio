@@ -660,6 +660,8 @@ function parseRoute(text, regions){
   return '';
 }
 
+const pick = a => a[Math.floor(Math.random()*a.length)];
+
 function localGenerate(kp){
   const f=parseLabeled(kp);
   const route=findRoute(kp);
@@ -696,9 +698,19 @@ function localGenerate(kp){
 
     let headline;
     const seatTxt = seatNum ? (seatNum+' seat'+(+seatNum===1?'':'s')+' left.') : '';
-    if(dest) headline = dest+' calling.'+(seatTxt?('\n'+seatTxt):'\nLast call.');
-    else if(routeStr) headline = 'Last-minute fare.\n'+(seatTxt||'Move fast.');
-    else headline = 'Pack tonight.\nThank us later.';
+    if(dest){
+      const hook = pick([
+        dest+' calling.',
+        'Suddenly, '+dest+'.',
+        dest+', on short notice.',
+        'Next stop: '+dest+'.',
+        dest+'. This week.',
+        'Drop everything.\n'+dest+'.'
+      ]);
+      headline = hook+'\n'+(seatTxt || pick(['Last call.','Move fast.','Blink and it’s gone.','Won’t last the day.']));
+    }
+    else if(routeStr) headline = pick(['Last-minute fare.','Gone by tonight.','Short notice.\nGreat seat.'])+'\n'+(seatTxt||'Move fast.');
+    else headline = pick(['Pack tonight.\nThank us later.','Spontaneity,\nrewarded.','The best plans\nare last-minute.']);
 
     return { type, route:routeStr||dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
   }
@@ -708,13 +720,37 @@ function localGenerate(kp){
   const multi = regions.length>1;
   let headline, sub;
   if(type==='hotel'){
-    headline = hotelName ? (hotelName+',\nfor rather less.') : 'Five-star stays.\nFour-figure regret avoided.';
+    headline = hotelName ? pick([
+      hotelName+',\nfor rather less.',
+      hotelName+', at a rate\nthey don\u2019t advertise.',
+      hotelName+', minus\nthe rack rate.'
+    ]) : pick([
+      'Five-star stays.\nFour-figure regret avoided.',
+      'The good hotels,\nquietly discounted.',
+      'Suites for less than\nthe booking sites.'
+    ]);
     sub = (hotelName?hotelName:'Suites the brochure charges double for')+' \u2014 at a rate you won\u2019t find on the booking sites.';
   } else if(multi){
-    headline = 'Lowest fares\nwe\u2019ve ever run.';
+    headline = pick([
+      'Lowest fares\nwe\u2019ve ever run.',
+      'Pick a city.\nWe\u2019ve priced it down.',
+      'Everywhere you\u2019d\nrather be.',
+      'Half the fare.\nAll the legroom.'
+    ]);
     sub = cabin+' to '+regions.slice(0,-1).join(', ')+' and '+regions.slice(-1)+' \u2014 the cheapest seats we\u2019ve put out.';
   } else {
-    headline = dest ? (dest+',\nthe way it should be flown.') : 'The seats the rest\nof the cabin overpaid for.';
+    headline = dest ? pick([
+      dest+',\nthe way it should be flown.',
+      'Turn left\nfor '+dest+'.',
+      dest+', minus the\neconomy part.',
+      'The smart way\nto '+dest+'.',
+      'Flat bed\nto '+dest+'.',
+      dest+'.\nDecided.'
+    ]) : pick([
+      'The seats the rest\nof the cabin overpaid for.',
+      'Business Class,\neconomy math.',
+      'Fly like you\nmean it.'
+    ]);
     sub = cabin+(dest?(' to '+dest):'')+(airline?(' on '+airline):'')+' \u2014 at a price the rest of the cabin won\u2019t believe.';
   }
   return { type, route:dest, airline, hotelName, logo:logo?logo[0]:'', kicker, prices, exCity, headline, sub };
@@ -871,7 +907,7 @@ function posterHTML(st){
   const kicker = st.kicker ? (
     '<div style="display:flex;align-items:center;gap:14px;margin:46px 0 22px 0;">'+
       '<span style="width:42px;height:2px;background:#E0935A;display:block;"></span>'+
-      '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:26px;letter-spacing:0.14em;text-transform:uppercase;color:#E0935A;font-weight:700;">'+esc(st.kicker)+'</span>'+
+      '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:30px;letter-spacing:0.14em;text-transform:uppercase;color:#E0935A;font-weight:700;">'+esc(st.kicker)+'</span>'+
     '</div>') : '<div style="height:46px;"></div>';
   const logoBlock = st.logoUrl
     ? '<div style="align-self:flex-start;background:#F5EFE0;border-radius:4px;padding:13px 18px;margin:0 0 28px 0;"><img src="'+st.logoUrl+'" alt="" style="height:52px;width:auto;display:block;"></div>'
@@ -881,11 +917,11 @@ function posterHTML(st){
     if (arr.length===1){
       return '<div style="display:flex;align-items:baseline;gap:26px;padding:18px 0;">'+
         (p.label?'<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:25px;letter-spacing:0.1em;text-transform:uppercase;color:#F5EFE0;opacity:0.82;font-weight:600;align-self:center;">'+esc(p.label)+'</span>':'')+
-        '<span style="font-family:\'DM Serif Display\',serif;font-size:54px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
+        '<span style="font-family:\'DM Serif Display\',serif;font-size:62px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
     }
     return '<div style="display:flex;align-items:baseline;justify-content:space-between;padding:18px 0;'+border+'">'+
       '<span style="font-family:\'Glacial Indifference\',sans-serif;font-size:25px;letter-spacing:0.1em;text-transform:uppercase;color:#F5EFE0;opacity:0.82;font-weight:600;">'+esc(p.label)+'</span>'+
-      '<span style="font-family:\'DM Serif Display\',serif;font-size:38px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
+      '<span style="font-family:\'DM Serif Display\',serif;font-size:44px;font-weight:400;color:#E0935A;">'+esc(p.value)+'</span></div>';
   }).join('');
   const pricing = priceRows ? '<div style="border-top:1px solid rgba(245,239,224,0.28);max-width:840px;">'+priceRows+'</div>' : '';
   return bg +
