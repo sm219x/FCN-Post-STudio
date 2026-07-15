@@ -29,10 +29,28 @@ Return ONLY a JSON object, no markdown, with these keys:
 - "kicker": a SHORT tag. For lastmin use the travel DATE or DATE RANGE exactly as given, normalised (e.g. "22 June", or "22–25 June" when a range like "22nd June – 25th June" is given — keep BOTH ends). Otherwise an urgency tag ONLY if implied ("Next 30 days only", "Limited seats", "Book by 30 June"); else ""
 - "prices": array of { "label": region/route or "", "value": "from ₹79K" } — ONLY if prices are given; else []. Format Indian style: 79k -> "₹79K", 1.49L or 1.49 lakh -> "₹1.49L". Always prefix "from ". For lastmin a single { "label":"", "value":"from ₹89K" } is typical.
 - "exCity": the ex-departure note for the caption if a departure city/origin is given (e.g. "ex-Delhi"); for lastmin infer from the first airport code (DEL->Delhi, BOM->Mumbai, BLR->Bangalore); else ""
-- "headline": 2-4 words per line, 1-3 lines, use \\n for line breaks. Sentence case. The witty hook — NOT a data dump. VARY the construction from post to post: do NOT default to "<City> calling" / "<City> calls" — that pattern is worn out. Rotate through genuinely different angles, e.g. sudden-plan ("Suddenly, Paris."), the cabin itself ("Turn left\\nfor Tokyo."), price coup ("Business Class,\\neconomy math."), decision made ("London. Booked."), understatement ("A perfectly\\nsensible splurge."), second person ("Your seat's\\nup front."), destination texture ("Tokyo, before the\\nblossoms drop."). Invent your own in this spirit too. For lastmin, a short destination-led hook + a seats line (e.g. "Suddenly, London.\\n3 seats left.") — ALWAYS include the seat count if given in ANY phrasing ("3 seats", "3 Seats available", "Seats - 3"); keep route/timing/layover OUT of the headline. Tie festive/seasonal angles back to travel.
-- "sub": For lastmin, a single pipe-joined detail line in this order: route | Timing <time> | Layover <place/duration> | <N stops> | Non-refundable (omit any not given), e.g. "DEL – WAW – LHR  |  Timing 8:00 AM - 5:10 PM  |  Layover Warsaw - 2h 40m  |  Non-refundable". For other types, ONE witty supporting sentence.
+- "headline": 2-4 words per line, 1-3 lines, use \\n for line breaks. Sentence case. The witty hook — NOT a data dump. The request will name a HEADLINE ANGLE — build the headline from THAT angle, written fresh for this specific deal (never copy a stock phrase). BANNED patterns (worn out, never use): "<City> calling", "<City> calls", "Suddenly, <City>", "Turn left for <City>". For lastmin, the headline must also work in a seats line — ALWAYS include the seat count if given in ANY phrasing ("3 seats", "3 Seats available", "Seats - 3"); keep route/timing/layover OUT of the headline. Tie festive/seasonal angles back to travel.
+- "sub": For lastmin, a single pipe-joined detail line in this order: route | Timing <time> | Layover <place/duration> | <N stops> | Non-refundable (omit any not given), e.g. "DEL – WAW – LHR  |  Timing 8:00 AM - 5:10 PM  |  Layover Warsaw - 2h 40m  |  Non-refundable". For other types, ONE witty supporting sentence — vary its construction too (don't open every sub the same way, and never recycle the headline's joke into the sub).
 
 Keep it tight. No filler. Capitalize "Business Class" and "First Class".`;
+
+// One angle is picked at random per request and named in the prompt, so repeated
+// generations of the same deal come out constructed differently. Descriptions only —
+// no example headlines, so the model can't copy a stock phrase verbatim.
+const ANGLES = [
+  'DECISION MADE: the trip is already decided, stated as a done deal — short, declarative, full stops',
+  'PRICE COUP: the gag is the arithmetic — a premium cabin at a number that should not be possible',
+  'THE CABIN: write about the seat/experience itself (flat bed, champagne, the front of the plane), destination secondary',
+  'SECOND PERSON: put the reader in the picture — their seat, their weekend, their upgrade',
+  'UNDERSTATEMENT: dry, sensible-sounding words for an extravagant thing',
+  'DESTINATION TEXTURE: one vivid, specific image of the destination (season, food, weather, a street) — no clichés',
+  'INSIDER WHISPER: the tone of a tip shared quietly before everyone else finds out',
+  'PERMISSION: gently talk the reader into the indulgence they were already considering',
+  'TIME PLAY: the gag is how soon/short/sudden it is — timing, not the place, is the hook',
+  'ECONOMY ROAST: a light jab at flying economy or paying full fare (never punch at the reader)',
+  'QUIET FLEX: what it feels like to have booked this before anyone else knew it existed',
+  'PLAIN CONFIDENCE: no joke at all — just the fact of the deal said beautifully and briefly'
+];
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
@@ -43,17 +61,24 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); } catch (e) { return { statusCode: 400, body: 'Bad JSON' }; }
   const keypoints = (body.keypoints || '').toString().slice(0, 4000);
   const image = body.image; // optional dataURL of an airline ad
+  // Recent headlines from this browser (sent by the client) — the model must not echo them.
+  const avoid = Array.isArray(body.avoid)
+    ? body.avoid.filter(s => typeof s === 'string').map(s => s.replace(/\s+/g, ' ').trim().slice(0, 120)).filter(Boolean).slice(0, 10)
+    : [];
+  const angle = ANGLES[Math.floor(Math.random() * ANGLES.length)];
+  let steer = '\n\nHEADLINE ANGLE for this post: ' + angle + '.';
+  if (avoid.length) steer += '\nRecent headlines already used (write something CLEARLY different in wording AND structure):\n- ' + avoid.join('\n- ');
 
   const content = [];
   if (image && /^data:image\//.test(image)) {
     const m = image.match(/^data:(image\/[a-z]+);base64,(.*)$/i);
     if (m) {
       content.push({ type: 'image', source: { type: 'base64', media_type: m[1], data: m[2] } });
-      content.push({ type: 'text', text: 'Read the deal from this airline ad. Additional notes: ' + (keypoints || '(none)') });
+      content.push({ type: 'text', text: 'Read the deal from this airline ad. Additional notes: ' + (keypoints || '(none)') + steer });
     }
   }
   if (!content.length) {
-    content.push({ type: 'text', text: 'KEY POINTS:\n' + keypoints });
+    content.push({ type: 'text', text: 'KEY POINTS:\n' + keypoints + steer });
   }
 
   let data;
