@@ -185,6 +185,15 @@
     try {
       var canvas = await render(posterId);
       if (!canvas) return;
+      // Auto-save a copy to the FCN ops-board "recent posters" gallery
+      // (fire-and-forget; never blocks or fails the download).
+      try {
+        var dataUrl = canvas.toDataURL('image/png');
+        fetch('/api/save-poster', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl, caption: name || '', type: 'Poster' })
+        }).catch(function () {});
+      } catch (e) {}
       canvas.toBlob(function (blob) {
         if (!blob) return;
         var url = URL.createObjectURL(blob);
