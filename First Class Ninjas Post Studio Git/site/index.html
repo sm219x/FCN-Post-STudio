@@ -757,7 +757,7 @@ function localGenerate(kp){
   } else {
     headline = dest ? pick([
       dest+',\nthe way it should be flown.',
-      dest+', minus the\neconomy part.',
+      dest+',\ndone properly.',
       'The smart way\nto '+dest+'.',
       'Flat bed\nto '+dest+'.',
       dest+'.\nDecided.',
@@ -765,14 +765,14 @@ function localGenerate(kp){
       dest+', and arrive\nlike you mean it.',
       'Your '+dest+' trip,\nupgraded.'
     ]) : pick([
-      'The seats the rest\nof the cabin overpaid for.',
+      'The good seats,\nfinally in reach.',
       'Business Class,\neconomy math.',
       'Fly like you\nmean it.'
     ]);
     sub = cabin+(dest?(' to '+dest):'')+(airline?(' on '+airline):'')+pick([
-      ' \u2014 at a price the rest of the cabin won\u2019t believe.',
+      ' \u2014 at a price that finally makes sense.',
       ' \u2014 booked smart, priced like it.',
-      ' \u2014 for less than some people pay for premium economy.',
+      ' \u2014 for a fare that looks like a typo. It isn\u2019t.',
       ' \u2014 the fare, not the seat, is the surprise.'
     ]);
   }
@@ -893,12 +893,12 @@ function gen(field){
     return (state.hotelName ? (state.hotelName + ' \u2014 below what you\u2019d find online.') : 'Ritz-Carlton, St. Regis, Edition and more \u2014 all below what you\u2019d find online.');
   }
   if (state.type==='airline'){
-    if (field==='headline') return dest ? (dest + '. ' + (a||'Business') + ' business class.') : 'The seats the rest of the cabin overpaid for.';
+    if (field==='headline') return dest ? (dest + '. ' + (a||'Business') + ' business class.') : 'The good seats, finally in reach.';
     return ('Business Class on ' + (a||'a top airline') + (dest?(' to '+dest):'') + ' \u2014 booked smart, priced like it.');
   }
   // flight
   if (field==='headline') return dest ? (dest + ',\nthe way it should be flown.') : 'Lowest fares we\u2019ve ever run.';
-  return ('Business &amp; First Class' + (dest?(' to '+dest):'') + ' \u2014 at a price the rest of the cabin won\u2019t believe.');
+  return ('Business &amp; First Class' + (dest?(' to '+dest):'') + ' \u2014 at a price that finally makes sense.');
 }
 
 function buildCaption(){

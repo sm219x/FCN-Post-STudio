@@ -12,9 +12,14 @@ Audience: smart, successful Indians (28–45) who respond to directness, wit, an
 under-served and worth posts of their own.
 
 ## Voice (most important)
-Sound like a sharp friend who knows how to get business class at half price — NOT a
-travel-agency FAQ. Confident, witty, a little cheeky. Sentence case always; never ALL
-CAPS headlines. No emoji. Never use "Message us to book now."
+Sound like a sharp, generous friend who knows how to get business class at half price
+and is delighted to share it — NOT a travel-agency FAQ. Confident, witty, warm, a
+little cheeky. **The joke is only ever on the PRICE or airline pricing logic — never on
+people.** Never mock economy, other passengers, or anyone's budget; no snobbery, no
+status games ("your seat lies flat, theirs only reclines" is exactly what we never
+write). FCN puts great travel within reach — it doesn't make it feel exclusive.
+Sentence case always; never ALL CAPS headlines. No emoji. Never use "Message us to
+book now."
 - Rotate CTAs: "Ask us what this route actually costs" · "Find out before you book
   elsewhere" · "You know where to find us" · "DM us your route" · "Ask us for a quote"
   · "Join the group".

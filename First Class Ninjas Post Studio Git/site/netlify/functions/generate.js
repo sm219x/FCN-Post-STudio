@@ -17,7 +17,15 @@ const LOGOS = [
 
 const SYSTEM = `You write social posts for First Class Ninjas (FCN), who sell discounted Business & First Class flights and luxury hotels to smart, successful Indians (28-45), mostly over WhatsApp.
 
-VOICE: a sharp friend who knows how to get business class at half price — confident, witty, a little cheeky. Sentence case always, never ALL CAPS. No emoji. Never say "Message us to book now". About 1 in 5 posts leans humorous.
+VOICE: a sharp, generous friend who has found a way to make flying well affordable — and is genuinely delighted to share it. Confident, witty, warm. The deal is the hero; the reader is smart and works hard for their money. THE GOLDEN RULE: the joke is only ever on the PRICE or on airline pricing logic — never on people. Never mock economy, other passengers, other travellers, or anyone's budget. No snobbery, no status games, no "us vs them". FCN exists to put great travel within reach, not to make it feel exclusive. Sentence case always, never ALL CAPS. No emoji. Never say "Message us to book now". About 1 in 5 posts leans humorous.
+
+TASTE — hard rules:
+- No punching down: never compare the reader's seat, cabin or trip favourably against other passengers or economy flyers. If a line reads as a flex over other people, kill it and write a different one.
+- Warmth over cleverness. A great FCN line feels like a friend sliding you a boarding pass with a grin — "look what I found", never "look what you're missing".
+- One idea per headline. If the joke needs two clauses to land, cut it.
+- No city-name puns. No weather/food clichés (grey skies, proper tea, croissants, "the city that…"). No "hidden gem".
+- Never restate the deal data as the headline — the price block already does that job.
+- No exclamation marks.
 
 You will receive KEY POINTS describing a deal (and sometimes an uploaded airline ad image to read the deal from). Extract the facts and write FCN-style copy.
 
@@ -37,18 +45,28 @@ Keep it tight. No filler. Capitalize "Business Class" and "First Class".`;
 // One angle is picked at random per request and named in the prompt, so repeated
 // generations of the same deal come out constructed differently. Descriptions only —
 // no example headlines, so the model can't copy a stock phrase verbatim.
-const ANGLES = [
+// Two lists: last-minute posts get urgency-native angles; everything else gets
+// deal/aspiration angles. ECONOMY ROAST and QUIET FLEX were removed deliberately —
+// they generated snobbery (jokes at other passengers' expense). Do not re-add them.
+const DEAL_ANGLES = [
   'DECISION MADE: the trip is already decided, stated as a done deal — short, declarative, full stops',
-  'PRICE COUP: the gag is the arithmetic — a premium cabin at a number that should not be possible',
-  'THE CABIN: write about the seat/experience itself (flat bed, champagne, the front of the plane), destination secondary',
-  'SECOND PERSON: put the reader in the picture — their seat, their weekend, their upgrade',
-  'UNDERSTATEMENT: dry, sensible-sounding words for an extravagant thing',
-  'DESTINATION TEXTURE: one vivid, specific image of the destination (season, food, weather, a street) — no clichés',
-  'INSIDER WHISPER: the tone of a tip shared quietly before everyone else finds out',
-  'PERMISSION: gently talk the reader into the indulgence they were already considering',
-  'TIME PLAY: the gag is how soon/short/sudden it is — timing, not the place, is the hook',
-  'ECONOMY ROAST: a light jab at flying economy or paying full fare (never punch at the reader)',
-  'QUIET FLEX: what it feels like to have booked this before anyone else knew it existed',
+  'PRICE COUP: the arithmetic is the gag — a premium cabin at a number that should not be possible; the airline pricing department is the butt of the joke, never other travellers',
+  'THE CABIN: the seat and the experience itself — flat bed, quiet, sleep, arriving rested — destination secondary',
+  'SECOND PERSON: put the reader in the picture — their seat, their weekend, their morning landing',
+  'UNDERSTATEMENT: dry, sensible-sounding words for a lovely extravagant thing',
+  'DESTINATION MOMENT: one specific, warm image of actually being there (a season, a meal, a first morning) — concrete and inviting, not poetic',
+  'INSIDER TIP: shared quietly like a good secret between friends — generous, not gatekeeping',
+  'PERMISSION: warmly talk the reader into the trip they were already dreaming about',
+  'ARRIVAL: how it feels to land rested and start the trip well',
+  'PLAIN CONFIDENCE: no joke at all — just the fact of the deal said beautifully and briefly'
+];
+const LASTMIN_ANGLES = [
+  'TIME PLAY: the suddenness is the hook — how soon it leaves, how fast this window closes',
+  'SPONTANEITY: celebrate the joy of an unplanned trip — the best stories start this way',
+  'DECISION MADE: the trip is already decided, stated as a done deal — short, declarative, full stops',
+  'SECOND PERSON: speak straight to the reader — their week just got a lot more interesting',
+  'INSIDER TIP: shared quietly like a good secret between friends — generous, not gatekeeping',
+  'PERMISSION: warmly give the reader the nudge to just go',
   'PLAIN CONFIDENCE: no joke at all — just the fact of the deal said beautifully and briefly'
 ];
 
@@ -65,7 +83,8 @@ exports.handler = async (event) => {
   const avoid = Array.isArray(body.avoid)
     ? body.avoid.filter(s => typeof s === 'string').map(s => s.replace(/\s+/g, ' ').trim().slice(0, 120)).filter(Boolean).slice(0, 10)
     : [];
-  const angle = ANGLES[Math.floor(Math.random() * ANGLES.length)];
+  const angleList = (body.type === 'lastmin') ? LASTMIN_ANGLES : DEAL_ANGLES;
+  const angle = angleList[Math.floor(Math.random() * angleList.length)];
   let steer = '\n\nHEADLINE ANGLE for this post: ' + angle + '.';
   if (avoid.length) steer += '\nRecent headlines already used (write something CLEARLY different in wording AND structure):\n- ' + avoid.join('\n- ');
 
@@ -87,7 +106,9 @@ exports.handler = async (event) => {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
+        // Sonnet writes the copy (better taste); vision requests stay on Haiku
+        // because image turns must clear Netlify's 10s sync-function limit.
+        model: image ? 'claude-haiku-4-5' : 'claude-sonnet-5',
         max_tokens: 700,
         system: SYSTEM,
         messages: [{ role: 'user', content }]
