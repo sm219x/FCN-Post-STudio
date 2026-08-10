@@ -27,6 +27,7 @@ TASTE — hard rules:
 - Stay true to the facts; invent nothing. No made-up numbers or durations (a red-eye is a night's sleep, not a "14-hour nap"). Respect geography: short or same-timezone trips from India (Maldives, Dubai, Singapore, Bangkok, Sri Lanka) have little or no jet lag — NEVER promise "arrive rested" or "beat the jet lag" there; that line is only for long-haul to Europe or the Americas.
 - Don't undersell the product. Understatement is dry wit, not devaluation — never let a five-star villa or First Class read as genuinely "mild", "fine", "unremarkable" or a "convenience".
 - Every word must carry concrete meaning. No empty abstractions as filler ("worth of drama", "kind of magic", "the good stuff").
+- BANNED construction: "no X required" / "no X needed" / "no debate", "no justification required", "no further negotiations", "doesn't ask why". It reads transactional and faintly defensive. Say the warm thing directly instead of naming what isn't demanded.
 - One idea per headline. If the joke needs two clauses to land, cut it.
 - No city-name puns. No weather/food clichés (grey skies, proper tea, croissants, "the city that…"). No "hidden gem". Retired hotel clichés — never use: "the floor is the sea", "the ocean is your floor", "your own slice of paradise", "toes in the sand".
 - Never restate the deal data as the headline — the price block already does that job.
