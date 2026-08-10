@@ -22,8 +22,13 @@ VOICE: a sharp, generous friend who has found a way to make flying well affordab
 TASTE — hard rules:
 - No punching down: never compare the reader's seat, cabin or trip favourably against other passengers or economy flyers. If a line reads as a flex over other people, kill it and write a different one.
 - Warmth over cleverness. A great FCN line feels like a friend sliding you a boarding pass with a grin — "look what I found", never "look what you're missing".
+- The reader is smart and decisive. NEVER imply they were making excuses, hesitating, stalling, being talked round, negotiating, or "finally" doing the sensible thing. It's a warm nudge between friends, never a scold and never a hard sales close ("zero negotiations", "excuse you had left", "stop dreaming and just" all fail this).
+- Mind your verbs — read every line literally. FCN GIVES / opens up / hands you the good thing; it never "saves you" from it ("saving you a flat bed" says the opposite of what you mean). If the logic doesn't hold literally, rewrite it.
+- Stay true to the facts; invent nothing. No made-up numbers or durations (a red-eye is a night's sleep, not a "14-hour nap"). Respect geography: short or same-timezone trips from India (Maldives, Dubai, Singapore, Bangkok, Sri Lanka) have little or no jet lag — NEVER promise "arrive rested" or "beat the jet lag" there; that line is only for long-haul to Europe or the Americas.
+- Don't undersell the product. Understatement is dry wit, not devaluation — never let a five-star villa or First Class read as genuinely "mild", "fine", "unremarkable" or a "convenience".
+- Every word must carry concrete meaning. No empty abstractions as filler ("worth of drama", "kind of magic", "the good stuff").
 - One idea per headline. If the joke needs two clauses to land, cut it.
-- No city-name puns. No weather/food clichés (grey skies, proper tea, croissants, "the city that…"). No "hidden gem".
+- No city-name puns. No weather/food clichés (grey skies, proper tea, croissants, "the city that…"). No "hidden gem". Retired hotel clichés — never use: "the floor is the sea", "the ocean is your floor", "your own slice of paradise", "toes in the sand".
 - Never restate the deal data as the headline — the price block already does that job.
 - No exclamation marks.
 
@@ -45,20 +50,32 @@ Keep it tight. No filler. Capitalize "Business Class" and "First Class".`;
 // One angle is picked at random per request and named in the prompt, so repeated
 // generations of the same deal come out constructed differently. Descriptions only —
 // no example headlines, so the model can't copy a stock phrase verbatim.
-// Two lists: last-minute posts get urgency-native angles; everything else gets
-// deal/aspiration angles. ECONOMY ROAST and QUIET FLEX were removed deliberately —
-// they generated snobbery (jokes at other passengers' expense). Do not re-add them.
-const DEAL_ANGLES = [
+// THREE lists, routed by post type: flights, hotels, last-minute. Hotels get their
+// OWN list — flight-only concepts (flat bed, jet lag, landing rested) produced nonsense
+// on hotel deals (e.g. "beat the jet lag" for the Maldives). ECONOMY ROAST and QUIET
+// FLEX were removed deliberately (snobbery). Do not re-add them.
+const FLIGHT_ANGLES = [
   'DECISION MADE: the trip is already decided, stated as a done deal — short, declarative, full stops',
   'PRICE COUP: the arithmetic is the gag — a premium cabin at a number that should not be possible; the airline pricing department is the butt of the joke, never other travellers',
-  'THE CABIN: the seat and the experience itself — flat bed, quiet, sleep, arriving rested — destination secondary',
+  'THE CABIN: the seat and the experience itself — flat bed, quiet, real sleep on a long-haul — destination secondary',
   'SECOND PERSON: put the reader in the picture — their seat, their weekend, their morning landing',
-  'UNDERSTATEMENT: dry, sensible-sounding words for a lovely extravagant thing',
+  'UNDERSTATEMENT: dry, sensible-sounding words for a lovely extravagant thing (never let it read as genuinely small)',
   'DESTINATION MOMENT: one specific, warm image of actually being there (a season, a meal, a first morning) — concrete and inviting, not poetic',
   'INSIDER TIP: shared quietly like a good secret between friends — generous, not gatekeeping',
-  'PERMISSION: warmly talk the reader into the trip they were already dreaming about',
-  'ARRIVAL: how it feels to land rested and start the trip well',
+  'PERMISSION: warmly affirm the trip the reader was already dreaming about — encouragement, never a scold',
+  'ARRIVAL: the ease of landing rested — ONLY for long-haul to Europe/the Americas, never same-timezone hops',
   'PLAIN CONFIDENCE: no joke at all — just the fact of the deal said beautifully and briefly'
+];
+const HOTEL_ANGLES = [
+  'DECISION MADE: the stay is already decided, stated as a done deal — short, declarative, full stops',
+  'PRICE COUP: the arithmetic is the gag — a five-star rate that should not be possible; the resort/its pricing is the butt of the joke, never other guests',
+  'THE STAY: the room, villa, view, pool or first morning waking up there — the place itself',
+  'SECOND PERSON: put the reader in the picture — their villa, their view, their slow morning',
+  'UNDERSTATEMENT: dry, sensible-sounding words for pure indulgence (never let five-star read as "mild" or "fine")',
+  'DESTINATION MOMENT: one specific, warm image of being there (the light, a meal, the first swim) — concrete and inviting, not poetic',
+  'INSIDER TIP: shared quietly like a good secret between friends — generous, not gatekeeping',
+  'PERMISSION: warmly affirm the escape the reader has earned — encouragement, never a scold',
+  'PLAIN CONFIDENCE: no joke at all — just the fact of the stay said beautifully and briefly'
 ];
 const LASTMIN_ANGLES = [
   'TIME PLAY: the suddenness is the hook — how soon it leaves, how fast this window closes',
@@ -83,7 +100,9 @@ exports.handler = async (event) => {
   const avoid = Array.isArray(body.avoid)
     ? body.avoid.filter(s => typeof s === 'string').map(s => s.replace(/\s+/g, ' ').trim().slice(0, 120)).filter(Boolean).slice(0, 10)
     : [];
-  const angleList = (body.type === 'lastmin') ? LASTMIN_ANGLES : DEAL_ANGLES;
+  const angleList = body.type === 'lastmin' ? LASTMIN_ANGLES
+                  : body.type === 'hotel'   ? HOTEL_ANGLES
+                  : FLIGHT_ANGLES;
   const angle = angleList[Math.floor(Math.random() * angleList.length)];
   let steer = '\n\nHEADLINE ANGLE for this post: ' + angle + '.';
   if (avoid.length) steer += '\nRecent headlines already used (write something CLEARLY different in wording AND structure):\n- ' + avoid.join('\n- ');
