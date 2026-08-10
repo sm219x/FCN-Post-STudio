@@ -126,10 +126,14 @@ exports.handler = async (event) => {
   let txt = '';
   try { txt = data.content.map(b => b.text || '').join(''); } catch (e) {}
   let obj;
-  try {
-    const js = txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
-    obj = JSON.parse(js);
-  } catch (e) {
+  const js = txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
+  // The model occasionally emits literal newlines inside JSON strings (invalid JSON).
+  // Cascade: as-is -> control chars as \n escapes -> control chars stripped.
+  const candidates = [js, js.replace(/[\u0000-\u001f]+/g, '\\n'), js.replace(/[\u0000-\u001f]+/g, ' ')];
+  for (const c of candidates) {
+    try { obj = JSON.parse(c); break; } catch (e) {}
+  }
+  if (!obj) {
     return { statusCode: 502, body: JSON.stringify({ error: 'parse', raw: txt.slice(0, 300) }) };
   }
 
