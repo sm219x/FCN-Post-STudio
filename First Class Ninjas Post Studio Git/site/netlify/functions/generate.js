@@ -134,6 +134,28 @@ exports.handler = async (event) => {
     try { obj = JSON.parse(c); break; } catch (e) {}
   }
   if (!obj) {
+    // Last resort: pull fields out individually so one bad character elsewhere
+    // (an unescaped quote, a stray control char) can't sink the whole response.
+    const pull = (k) => {
+      const m = js.match(new RegExp('"' + k + '"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"'));
+      if (!m) return '';
+      try { return JSON.parse('"' + m[1] + '"'); } catch (e) { return m[1]; }
+    };
+    const salvaged = {
+      type: pull('type'), airlineName: pull('airlineName'), hotelName: pull('hotelName'),
+      route: pull('route'), kicker: pull('kicker'), exCity: pull('exCity'),
+      headline: pull('headline'), sub: pull('sub'), prices: []
+    };
+    const pm = js.match(/"prices"\s*:\s*\[([\s\S]*?)\]/);
+    if (pm) {
+      for (const row of pm[1].matchAll(/\{[^}]*"value"\s*:\s*"((?:[^"\\]|\\.)*)"[^}]*\}/g)) {
+        const lab = (row[0].match(/"label"\s*:\s*"((?:[^"\\]|\\.)*)"/) || [])[1] || '';
+        salvaged.prices.push({ label: lab, value: row[1] });
+      }
+    }
+    if (salvaged.headline) obj = salvaged;
+  }
+  if (!obj) {
     return { statusCode: 502, body: JSON.stringify({ error: 'parse', raw: txt.slice(0, 300) }) };
   }
 
