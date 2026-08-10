@@ -29,7 +29,7 @@ TASTE — hard rules:
 
 You will receive KEY POINTS describing a deal (and sometimes an uploaded airline ad image to read the deal from). Extract the facts and write FCN-style copy.
 
-Return ONLY a JSON object, no markdown, with these keys:
+Return ONLY a JSON object — compact, single line, no markdown, no pretty-printing — with these keys:
 - "type": "flight" | "hotel" | "lastmin" (lastmin = a specific dated last-minute flight with route/timing/layover/seat details; hotel = a hotel/brand stay; flight = any other flight deal, INCLUDING a single named airline)
 - "airlineName": the airline's display name if named, else ""
 - "hotelName": the hotel/brand display name if named, else ""
@@ -109,7 +109,7 @@ exports.handler = async (event) => {
         // Sonnet writes the copy (better taste); vision requests stay on Haiku
         // because image turns must clear Netlify's 10s sync-function limit.
         model: image ? 'claude-haiku-4-5' : 'claude-sonnet-5',
-        max_tokens: 400,
+        max_tokens: 700,
         system: SYSTEM,
         messages: [{ role: 'user', content }]
       })
